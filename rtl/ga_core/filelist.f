@@ -1,0 +1,8 @@
+ga3b_rng_xorshift32.v
+ga3b_sun3_integrator.v
+ga3b_test_planet_integrator.v
+ga3b_heng_era_metric_accumulator.v
+ga3b_pure3_fallback_fitness_lane.v
+ga3b_heng_era_fitness_lane.v
+ga3b_fitness_lane.v
+ga3b_ga_core.v

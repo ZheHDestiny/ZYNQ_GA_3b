@@ -1,0 +1,91 @@
+# Local installation junction (full Vivado installation; never commit)
+tools/Vivado2023_2023.2/
+
+# Vivado generated project state, runs, caches and logs
+vivado/runs/
+vivado/.Xil/
+vivado/**/*.cache/
+vivado/**/*.gen/
+vivado/**/*.hw/
+vivado/**/*.ip_user_files/
+vivado/**/*.runs/
+vivado/**/*.srcs/
+vivado/**/*.xpr
+vivado/**/*.xpr.user
+vivado/**/*.jou
+vivado/**/*.log
+vivado/**/*.str
+vivado/**/*.pb
+vivado/**/*.dcp
+vivado/**/*.bit
+vivado/**/*.bin
+vivado/**/*.ltx
+vivado/**/*.xsa
+.Xil/
+*.jou
+*.log
+*.pb
+*.wdb
+*.wcfg
+*.dcp
+*.rpt
+
+# Vivado/XSim simulation products
+rtl/tb/xsim.dir/
+rtl/tb/.Xil/
+rtl/tb/*.jou
+rtl/tb/*.log
+rtl/tb/*.pb
+rtl/tb/*.wdb
+sim/xsim.dir/
+sim/.Xil/
+sim/*.jou
+sim/*.log
+sim/*.pb
+
+# Vitis/Eclipse workspaces and generated metadata
+vitis_workspace/
+**/.metadata/
+**/.settings/
+**/.project
+**/.cproject
+**/.launch
+**/Debug/
+**/Release/
+**/build/
+**/Debug configurations/
+**/platform/
+**/hw/
+**/bsp/
+**/zynq_fsbl/
+
+# Generated hardware/software artifacts
+**/artifacts/
+**/*.elf
+**/*.map
+**/*.elf.sha
+**/BOOT.BIN
+**/fsbl.elf
+**/pmufw.elf
+
+# Python caches and temporary files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+*.tmp
+*.temp
+
+# IDE/user-local files
+.vscode/*.code-workspace
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
