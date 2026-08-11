@@ -1,6 +1,9 @@
 # Create GA3B v1.0 minimal Zynq PS + AXI DMA + PL accelerator block design.
-# Target: xc7z020clg400-2. This script is intentionally board-agnostic;
-# it exports PS DDR/FIXED_IO and uses FCLK0=100 MHz for PL.
+# Target: 正点原子领航者(V2) ZYNQ-7020 (xc7z020clg400-2).
+# The PS7 settings below are taken from the vendor's 7020 Vivado reference
+# project (ZYNQ_Vitis_7020/10_ps_xadc).  They are deliberately explicit: a
+# generic PS7 default can generate a bitstream but cannot safely initialise
+# this board's DDR3, UART or boot peripherals.
 
 set script_dir [file dirname [file normalize [info script]]]
 set repo_root [file normalize [file join $script_dir .. ..]]
@@ -26,14 +29,46 @@ create_bd_design ga3b_system
 # Processing System 7
 create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 ps7_0
 set_property -dict [list \
+    CONFIG.PCW_UIPARAM_DDR_ENABLE {1} \
+    CONFIG.PCW_UIPARAM_DDR_MEMORY_TYPE {DDR 3 (Low Voltage)} \
+    CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K256M16 RE-125} \
+    CONFIG.PCW_UIPARAM_DDR_DEVICE_CAPACITY {4096 MBits} \
+    CONFIG.PCW_UIPARAM_DDR_BUS_WIDTH {32 Bit} \
+    CONFIG.PCW_UIPARAM_DDR_DRAM_WIDTH {16 Bits} \
+    CONFIG.PCW_UIPARAM_DDR_BANK_ADDR_COUNT {3} \
+    CONFIG.PCW_UIPARAM_DDR_ROW_ADDR_COUNT {15} \
+    CONFIG.PCW_UIPARAM_DDR_COL_ADDR_COUNT {10} \
+    CONFIG.PCW_UIPARAM_DDR_FREQ_MHZ {533.333333} \
+    CONFIG.PCW_UIPARAM_DDR_SPEED_BIN {DDR3_1066F} \
+    CONFIG.PCW_UIPARAM_DDR_CL {7} \
+    CONFIG.PCW_UIPARAM_DDR_CWL {6} \
+    CONFIG.PCW_UIPARAM_DDR_AL {0} \
+    CONFIG.PCW_UIPARAM_DDR_BL {8} \
+    CONFIG.PCW_UIPARAM_DDR_ECC {Disabled} \
+    CONFIG.PCW_UIPARAM_DDR_TRAIN_DATA_EYE {1} \
+    CONFIG.PCW_UIPARAM_DDR_TRAIN_READ_GATE {1} \
+    CONFIG.PCW_UIPARAM_DDR_TRAIN_WRITE_LEVEL {1} \
+    CONFIG.PCW_UIPARAM_DDR_USE_INTERNAL_VREF {0} \
+    CONFIG.PCW_PRESET_BANK0_VOLTAGE {LVCMOS 3.3V} \
+    CONFIG.PCW_PRESET_BANK1_VOLTAGE {LVCMOS 1.8V} \
     CONFIG.PCW_USE_M_AXI_GP0 {1} \
     CONFIG.PCW_USE_S_AXI_HP0 {1} \
     CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
     CONFIG.PCW_IRQ_F2P_INTR {1} \
     CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100.000000} \
-    CONFIG.PCW_QSPI_PERIPHERAL_ENABLE {0} \
-    CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {1} \
-    CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} \
+    CONFIG.PCW_QSPI_PERIPHERAL_ENABLE {1} \
+    CONFIG.PCW_QSPI_QSPI_IO {MIO 1 .. 6} \
+    CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} \
+    CONFIG.PCW_QSPI_GRP_SINGLE_SS_IO {MIO 1 .. 6} \
+    CONFIG.PCW_SD0_PERIPHERAL_ENABLE {1} \
+    CONFIG.PCW_SD0_SD0_IO {MIO 40 .. 45} \
+    CONFIG.PCW_SD0_GRP_CD_ENABLE {1} \
+    CONFIG.PCW_SD0_GRP_CD_IO {MIO 10} \
+    CONFIG.PCW_ENET0_PERIPHERAL_ENABLE {0} \
+    CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} \
+    CONFIG.PCW_UART0_UART0_IO {MIO 14 .. 15} \
+    CONFIG.PCW_UART0_BAUD_RATE {115200} \
+    CONFIG.PCW_UART1_PERIPHERAL_ENABLE {0} \
 ] [get_bd_cells ps7_0]
 
 # AXI DMA in simple mode. MM2S sends SearchTask to PL; S2MM receives SearchResult.

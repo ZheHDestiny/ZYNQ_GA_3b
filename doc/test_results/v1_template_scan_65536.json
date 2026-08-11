@@ -1,0 +1,862 @@
+{
+  "parameters": {
+    "max_gen": 64,
+    "steps": 65536,
+    "mutation_q16": 20480,
+    "crossover_q16": 57344,
+    "seed0": 806238907,
+    "seed1": 3726378372,
+    "fitness_profile": "survival",
+    "candidate_count": 1
+  },
+  "results": [
+    {
+      "input_seed0": 2924873073,
+      "input_seed1": 2589040972,
+      "selected_seeds": {
+        "seed0": 2985972653,
+        "seed1": 2060339652
+      },
+      "elapsed_ms": 2487.5806999989436,
+      "steps": 21343,
+      "genes": [
+        -0.3405609130859375,
+        -0.1645355224609375,
+        -0.2176666259765625,
+        -0.0559234619140625,
+        -0.86474609375,
+        -0.434539794921875,
+        -0.0840911865234375,
+        -0.2561798095703125
+      ],
+      "genes_raw": [
+        "0xFFFFA8D1",
+        "0xFFFFD5E1",
+        "0xFFFFC847",
+        "0xFFFFF1AF",
+        "0xFFFF22A0",
+        "0xFFFF90C2",
+        "0xFFFFEA79",
+        "0xFFFFBE6B"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.39111352350306894,
+        "compact_fraction": 0.08583690987124463,
+        "exchange_count": 3,
+        "max_rms_radius": 9.531403890345171,
+        "mean_pair_distance": 7.704709688905121,
+        "mean_rms_radius": 6.611723103131022,
+        "min_pair_distance": 0.5161135235030689,
+        "path_length": 50.21404246861078,
+        "radial_drift": 8.708885523408217,
+        "recurrence_error": 9.590354197788198,
+        "survived_ratio": 0.3256683349609375,
+        "winding_radians": 5.40033051507434
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 2924873073,
+        "seed1": 2589040972,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 2201189589,
+      "input_seed1": 1614186472,
+      "selected_seeds": {
+        "seed0": 2040330913,
+        "seed1": 2496431352
+      },
+      "elapsed_ms": 3304.3917000031797,
+      "steps": 21404,
+      "genes": [
+        -1.299957275390625,
+        -1.2234954833984375,
+        -0.273834228515625,
+        -0.0521240234375,
+        -0.23162841796875,
+        -0.899932861328125,
+        -0.0382080078125,
+        -0.1439361572265625
+      ],
+      "genes_raw": [
+        "0xFFFEB336",
+        "0xFFFEC6C9",
+        "0xFFFFB9E6",
+        "0xFFFFF2A8",
+        "0xFFFFC4B4",
+        "0xFFFF199E",
+        "0xFFFFF638",
+        "0xFFFFDB27"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.25133741234528395,
+        "compact_fraction": 0.05555555555555555,
+        "exchange_count": 2,
+        "max_rms_radius": 8.465582325989738,
+        "mean_pair_distance": 7.093279571237361,
+        "mean_rms_radius": 5.975402906210562,
+        "min_pair_distance": 0.37633741234528395,
+        "path_length": 44.04552559757112,
+        "radial_drift": 3.4402084823232575,
+        "recurrence_error": 4.381637668195008,
+        "survived_ratio": 0.32659912109375,
+        "winding_radians": 5.184799035929916
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 2201189589,
+        "seed1": 1614186472,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 2383654252,
+      "input_seed1": 1429954797,
+      "selected_seeds": {
+        "seed0": 2356430547,
+        "seed1": 2878993066
+      },
+      "elapsed_ms": 3083.0606000017724,
+      "steps": 21539,
+      "genes": [
+        -0.0072784423828125,
+        -1.3651580810546875,
+        -0.0946197509765625,
+        -0.08941650390625,
+        -0.6349029541015625,
+        -0.7397308349609375,
+        -0.220306396484375,
+        -0.111297607421875
+      ],
+      "genes_raw": [
+        "0xFFFFFE23",
+        "0xFFFEA285",
+        "0xFFFFE7C7",
+        "0xFFFFE91C",
+        "0xFFFF5D77",
+        "0xFFFF42A1",
+        "0xFFFFC79A",
+        "0xFFFFE382"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.2537361683784765,
+        "compact_fraction": 0.08050847457627118,
+        "exchange_count": 2,
+        "max_rms_radius": 9.037228073570624,
+        "mean_pair_distance": 6.526305105331613,
+        "mean_rms_radius": 6.05417832513673,
+        "min_pair_distance": 0.3787361683784765,
+        "path_length": 43.28697229759912,
+        "radial_drift": 4.656756351836034,
+        "recurrence_error": 5.6149299346550166,
+        "survived_ratio": 0.3286590576171875,
+        "winding_radians": 5.283424104108314
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 2383654252,
+        "seed1": 1429954797,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 1969840127,
+      "input_seed1": 3674526797,
+      "selected_seeds": {
+        "seed0": 2353301044,
+        "seed1": 2055805581
+      },
+      "elapsed_ms": 3172.5710000027902,
+      "steps": 21556,
+      "genes": [
+        -0.6934661865234375,
+        -0.679107666015625,
+        -0.0211334228515625,
+        -0.2661590576171875,
+        -0.573822021484375,
+        -0.23052978515625,
+        -0.18389892578125,
+        -0.0545806884765625
+      ],
+      "genes_raw": [
+        "0xFFFF4E79",
+        "0xFFFF5226",
+        "0xFFFFFA97",
+        "0xFFFFBBDD",
+        "0xFFFF6D1A",
+        "0xFFFFC4FC",
+        "0xFFFFD0EC",
+        "0xFFFFF207"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.3392594548570681,
+        "compact_fraction": 0.08898305084745763,
+        "exchange_count": 3,
+        "max_rms_radius": 9.156572210047475,
+        "mean_pair_distance": 6.892863136666248,
+        "mean_rms_radius": 5.977619780975918,
+        "min_pair_distance": 0.4642594548570681,
+        "path_length": 46.81807466624152,
+        "radial_drift": 7.181210991851117,
+        "recurrence_error": 8.096289807080897,
+        "survived_ratio": 0.32891845703125,
+        "winding_radians": 5.307018354200712
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 1969840127,
+        "seed1": 3674526797,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 3172918728,
+      "input_seed1": 1413393042,
+      "selected_seeds": {
+        "seed0": 1432188539,
+        "seed1": 2593937768
+      },
+      "elapsed_ms": 3145.659900001192,
+      "steps": 21596,
+      "genes": [
+        -0.144561767578125,
+        -0.137847900390625,
+        -0.1226654052734375,
+        -0.086212158203125,
+        -1.099945068359375,
+        -0.5139617919921875,
+        -0.0937347412109375,
+        -0.2315216064453125
+      ],
+      "genes_raw": [
+        "0xFFFFDAFE",
+        "0xFFFFDCB6",
+        "0xFFFFE099",
+        "0xFFFFE9EE",
+        "0xFFFEE66A",
+        "0xFFFF7C6D",
+        "0xFFFFE801",
+        "0xFFFFC4BB"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.05273842151981972,
+        "compact_fraction": 0.09745762711864407,
+        "exchange_count": 4,
+        "max_rms_radius": 9.188165320305174,
+        "mean_pair_distance": 6.320228678389202,
+        "mean_rms_radius": 5.9579600860115605,
+        "min_pair_distance": 0.17773842151981972,
+        "path_length": 43.56781364971584,
+        "radial_drift": 7.521710342580152,
+        "recurrence_error": 8.452689429417823,
+        "survived_ratio": 0.32952880859375,
+        "winding_radians": 5.041559876765929
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 3172918728,
+        "seed1": 1413393042,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 736962368,
+      "input_seed1": 3096700353,
+      "selected_seeds": {
+        "seed0": 1873377410,
+        "seed1": 2214827327
+      },
+      "elapsed_ms": 1373.0202000006102,
+      "steps": 21763,
+      "genes": [
+        -0.37646484375,
+        -0.5103912353515625,
+        -0.029144287109375,
+        -0.090667724609375,
+        -0.0325164794921875,
+        -1.412445068359375,
+        -0.2816619873046875,
+        -0.1189117431640625
+      ],
+      "genes_raw": [
+        "0xFFFF9FA0",
+        "0xFFFF7D57",
+        "0xFFFFF88A",
+        "0xFFFFE8CA",
+        "0xFFFFF7AD",
+        "0xFFFE966A",
+        "0xFFFFB7E5",
+        "0xFFFFE18F"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.0,
+        "compact_fraction": 0.08823529411764706,
+        "exchange_count": 3,
+        "max_rms_radius": 8.933159028396883,
+        "mean_pair_distance": 6.765803656600278,
+        "mean_rms_radius": 5.875892958957169,
+        "min_pair_distance": 0.12155244172297698,
+        "path_length": 45.86861423302376,
+        "radial_drift": 5.182722261326739,
+        "recurrence_error": 6.140684336947146,
+        "survived_ratio": 0.3320770263671875,
+        "winding_radians": 6.1719872485486835
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 736962368,
+        "seed1": 3096700353,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 1335427813,
+      "input_seed1": 1516649962,
+      "selected_seeds": {
+        "seed0": 2541172199,
+        "seed1": 510430178
+      },
+      "elapsed_ms": 2021.8403000035323,
+      "steps": 21640,
+      "genes": [
+        -0.6783294677734375,
+        -0.296630859375,
+        -0.15447998046875,
+        -0.050048828125,
+        -0.666229248046875,
+        -0.5667724609375,
+        -0.057769775390625,
+        -0.27154541015625
+      ],
+      "genes_raw": [
+        "0xFFFF5259",
+        "0xFFFFB410",
+        "0xFFFFD874",
+        "0xFFFFF330",
+        "0xFFFF5572",
+        "0xFFFF6EE8",
+        "0xFFFFF136",
+        "0xFFFFBA7C"
+      ],
+      "metrics": {
+        "close_pass_count": 0,
+        "collision_margin": 0.05224685892092318,
+        "compact_fraction": 0.08860759493670886,
+        "exchange_count": 3,
+        "max_rms_radius": 8.805021166574388,
+        "mean_pair_distance": 6.730853396256563,
+        "mean_rms_radius": 5.881313031367632,
+        "min_pair_distance": 0.17724685892092318,
+        "path_length": 44.378717311538665,
+        "radial_drift": 6.75588019822286,
+        "recurrence_error": 7.712515182742255,
+        "survived_ratio": 0.3302001953125,
+        "winding_radians": 5.240412279842589
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 1335427813,
+        "seed1": 1516649962,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 3815990070,
+      "input_seed1": 794662513,
+      "selected_seeds": {
+        "seed0": 1839821628,
+        "seed1": 1498874079
+      },
+      "elapsed_ms": 2955.972499999916,
+      "steps": 21453,
+      "genes": [
+        -1.274383544921875,
+        -0.4883575439453125,
+        -0.034576416015625,
+        -0.2894134521484375,
+        -0.5028228759765625,
+        -0.1060791015625,
+        -0.26531982421875,
+        -0.01629638671875
+      ],
+      "genes_raw": [
+        "0xFFFEB9C2",
+        "0xFFFF82FB",
+        "0xFFFFF726",
+        "0xFFFFB5E9",
+        "0xFFFF7F47",
+        "0xFFFFE4D8",
+        "0xFFFFBC14",
+        "0xFFFFFBD4"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.71294472954314,
+        "compact_fraction": 0.07234042553191489,
+        "exchange_count": 3,
+        "max_rms_radius": 8.920011219413597,
+        "mean_pair_distance": 8.443748478844054,
+        "mean_rms_radius": 6.665300919237851,
+        "min_pair_distance": 0.83794472954314,
+        "path_length": 54.52603459781283,
+        "radial_drift": 5.506482245407003,
+        "recurrence_error": 6.389785805106017,
+        "survived_ratio": 0.3273468017578125,
+        "winding_radians": 6.202588933471865
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 3815990070,
+        "seed1": 794662513,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 838807741,
+      "input_seed1": 291796384,
+      "selected_seeds": {
+        "seed0": 720867945,
+        "seed1": 298486678
+      },
+      "elapsed_ms": 3134.658399998443,
+      "steps": 21716,
+      "genes": [
+        0.21978759765625,
+        -0.1263275146484375,
+        -0.205322265625,
+        -0.111602783203125,
+        -1.0506439208984375,
+        -1.440185546875,
+        -0.1167449951171875,
+        -0.099578857421875
+      ],
+      "genes_raw": [
+        "0x00003844",
+        "0xFFFFDFA9",
+        "0xFFFFCB70",
+        "0xFFFFE36E",
+        "0xFFFEF309",
+        "0xFFFE8F50",
+        "0xFFFFE21D",
+        "0xFFFFE682"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.1923227873307532,
+        "compact_fraction": 0.08403361344537816,
+        "exchange_count": 4,
+        "max_rms_radius": 9.140548766755138,
+        "mean_pair_distance": 6.593760578518867,
+        "mean_rms_radius": 6.083122766930488,
+        "min_pair_distance": 0.3173227873307532,
+        "path_length": 44.38660711097763,
+        "radial_drift": 5.2646982558858975,
+        "recurrence_error": 6.147721709052302,
+        "survived_ratio": 0.33135986328125,
+        "winding_radians": 6.453515073750539
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 838807741,
+        "seed1": 291796384,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 2796310771,
+      "input_seed1": 2530173445,
+      "selected_seeds": {
+        "seed0": 3136746474,
+        "seed1": 3170508053
+      },
+      "elapsed_ms": 2875.974099995801,
+      "steps": 21772,
+      "genes": [
+        -0.062957763671875,
+        -0.2329254150390625,
+        -0.162811279296875,
+        -0.0193328857421875,
+        -0.7017822265625,
+        -0.67913818359375,
+        -0.163177490234375,
+        -0.2089080810546875
+      ],
+      "genes_raw": [
+        "0xFFFFEFE2",
+        "0xFFFFC45F",
+        "0xFFFFD652",
+        "0xFFFFFB0D",
+        "0xFFFF4C58",
+        "0xFFFF5224",
+        "0xFFFFD63A",
+        "0xFFFFCA85"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.6542320124383588,
+        "compact_fraction": 0.09663865546218488,
+        "exchange_count": 3,
+        "max_rms_radius": 9.162507437423526,
+        "mean_pair_distance": 6.781354266980481,
+        "mean_rms_radius": 6.087612340250733,
+        "min_pair_distance": 0.7792320124383588,
+        "path_length": 45.805719687771344,
+        "radial_drift": 9.183430343983735,
+        "recurrence_error": 10.116268334087792,
+        "survived_ratio": 0.33221435546875,
+        "winding_radians": 5.410095527431782
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 2796310771,
+        "seed1": 2530173445,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 330088079,
+      "input_seed1": 264508745,
+      "selected_seeds": {
+        "seed0": 199133841,
+        "seed1": 3268471096
+      },
+      "elapsed_ms": 2189.8309999960475,
+      "steps": 21591,
+      "genes": [
+        -0.925537109375,
+        -0.6039581298828125,
+        -0.065277099609375,
+        -0.2367095947265625,
+        -0.47174072265625,
+        -0.152313232421875,
+        -0.1460723876953125,
+        -0.0872344970703125
+      ],
+      "genes_raw": [
+        "0xFFFF1310",
+        "0xFFFF6563",
+        "0xFFFFEF4A",
+        "0xFFFFC367",
+        "0xFFFF873C",
+        "0xFFFFD902",
+        "0xFFFFDA9B",
+        "0xFFFFE9AB"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.22160108407233786,
+        "compact_fraction": 0.09322033898305085,
+        "exchange_count": 3,
+        "max_rms_radius": 8.966154554285255,
+        "mean_pair_distance": 6.631216875390649,
+        "mean_rms_radius": 6.028316448763535,
+        "min_pair_distance": 0.34660108407233786,
+        "path_length": 43.83176604241137,
+        "radial_drift": 6.773225118297825,
+        "recurrence_error": 7.686912721708596,
+        "survived_ratio": 0.3294525146484375,
+        "winding_radians": 5.258275120926367
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 330088079,
+        "seed1": 264508745,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 1704588030,
+      "input_seed1": 3504551218,
+      "selected_seeds": {
+        "seed0": 587594941,
+        "seed1": 1732987199
+      },
+      "elapsed_ms": 2958.243400003994,
+      "steps": 21099,
+      "genes": [
+        -0.635894775390625,
+        -0.14111328125,
+        -0.0778350830078125,
+        -0.1613311767578125,
+        -1.0353546142578125,
+        -1.499969482421875,
+        -0.21923828125,
+        -0.0351104736328125
+      ],
+      "genes_raw": [
+        "0xFFFF5D36",
+        "0xFFFFDBE0",
+        "0xFFFFEC13",
+        "0xFFFFD6B3",
+        "0xFFFEF6F3",
+        "0xFFFE8002",
+        "0xFFFFC7E0",
+        "0xFFFFF703"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.9356425877273984,
+        "compact_fraction": 0.06926406926406926,
+        "exchange_count": 3,
+        "max_rms_radius": 8.790396358584726,
+        "mean_pair_distance": 6.576569575727583,
+        "mean_rms_radius": 5.845493363911525,
+        "min_pair_distance": 1.0606425877273984,
+        "path_length": 43.628307733396746,
+        "radial_drift": 4.0108625125741595,
+        "recurrence_error": 4.909675143474677,
+        "survived_ratio": 0.3219451904296875,
+        "winding_radians": 5.622723424828687
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 1704588030,
+        "seed1": 3504551218,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 660273347,
+      "input_seed1": 3111023417,
+      "selected_seeds": {
+        "seed0": 1880504482,
+        "seed1": 261807202
+      },
+      "elapsed_ms": 2156.2876000025426,
+      "steps": 22126,
+      "genes": [
+        0.800048828125,
+        -0.430938720703125,
+        -0.1883544921875,
+        -0.1774749755859375,
+        -0.53790283203125,
+        0.017303466796875,
+        -0.13995361328125,
+        -0.0554656982421875
+      ],
+      "genes_raw": [
+        "0x0000CCD0",
+        "0xFFFF91AE",
+        "0xFFFFCFC8",
+        "0xFFFFD291",
+        "0xFFFF764C",
+        "0x0000046E",
+        "0xFFFFDC2C",
+        "0xFFFFF1CD"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.15621856755538882,
+        "compact_fraction": 0.1322314049586777,
+        "exchange_count": 4,
+        "max_rms_radius": 9.53731645642576,
+        "mean_pair_distance": 6.316191974329447,
+        "mean_rms_radius": 5.933021042997547,
+        "min_pair_distance": 0.2812185675553888,
+        "path_length": 47.324268893168814,
+        "radial_drift": 13.189880673756193,
+        "recurrence_error": 14.102533743898816,
+        "survived_ratio": 0.337615966796875,
+        "winding_radians": 7.955612431062644
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 660273347,
+        "seed1": 3111023417,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 3028004605,
+      "input_seed1": 2875210203,
+      "selected_seeds": {
+        "seed0": 4113148879,
+        "seed1": 1022681205
+      },
+      "elapsed_ms": 3144.2527000035625,
+      "steps": 21549,
+      "genes": [
+        -1.099945068359375,
+        -0.1288299560546875,
+        -0.2206268310546875,
+        -0.12542724609375,
+        -1.0731964111328125,
+        -0.4362335205078125,
+        0.0189971923828125,
+        -0.181671142578125
+      ],
+      "genes_raw": [
+        "0xFFFEE66A",
+        "0xFFFFDF05",
+        "0xFFFFC785",
+        "0xFFFFDFE4",
+        "0xFFFEED43",
+        "0xFFFF9053",
+        "0x000004DD",
+        "0xFFFFD17E"
+      ],
+      "metrics": {
+        "close_pass_count": 2,
+        "collision_margin": 0.18356513429405907,
+        "compact_fraction": 0.08050847457627118,
+        "exchange_count": 2,
+        "max_rms_radius": 9.1050359597391,
+        "mean_pair_distance": 6.85009045571047,
+        "mean_rms_radius": 6.022672152564166,
+        "min_pair_distance": 0.3085651342940591,
+        "path_length": 45.8051103243835,
+        "radial_drift": 4.716622153918528,
+        "recurrence_error": 5.627040307340392,
+        "survived_ratio": 0.3288116455078125,
+        "winding_radians": 6.203318357160051
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 3028004605,
+        "seed1": 2875210203,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 4093730615,
+      "input_seed1": 917082157,
+      "selected_seeds": {
+        "seed0": 589154372,
+        "seed1": 3569562693
+      },
+      "elapsed_ms": 3114.4686000043293,
+      "steps": 21453,
+      "genes": [
+        -0.6817779541015625,
+        -0.6212921142578125,
+        -0.06329345703125,
+        -0.081146240234375,
+        -1.099945068359375,
+        -0.4816131591796875,
+        -0.1345977783203125,
+        -0.2313079833984375
+      ],
+      "genes_raw": [
+        "0xFFFF5177",
+        "0xFFFF60F3",
+        "0xFFFFEFCC",
+        "0xFFFFEB3A",
+        "0xFFFEE66A",
+        "0xFFFF84B5",
+        "0xFFFFDD8B",
+        "0xFFFFC4C9"
+      ],
+      "metrics": {
+        "close_pass_count": 1,
+        "collision_margin": 0.07348400609627703,
+        "compact_fraction": 0.07659574468085106,
+        "exchange_count": 4,
+        "max_rms_radius": 8.661726956695704,
+        "mean_pair_distance": 6.397054901294361,
+        "mean_rms_radius": 5.817104399144789,
+        "min_pair_distance": 0.19848400609627703,
+        "path_length": 42.28948001816299,
+        "radial_drift": 4.80310110968448,
+        "recurrence_error": 5.757711127789707,
+        "survived_ratio": 0.3273468017578125,
+        "winding_radians": 4.72122553227257
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 4093730615,
+        "seed1": 917082157,
+        "steps": 65536
+      }
+    },
+    {
+      "input_seed0": 806238907,
+      "input_seed1": 3726378372,
+      "selected_seeds": {
+        "seed0": 477955063,
+        "seed1": 2375604568
+      },
+      "elapsed_ms": 2117.6083000027575,
+      "steps": 21904,
+      "genes": [
+        0.900054931640625,
+        -0.7910003662109375,
+        -0.1710357666015625,
+        -0.1674041748046875,
+        -0.842041015625,
+        -0.46234130859375,
+        -0.0386505126953125,
+        -0.07275390625
+      ],
+      "genes_raw": [
+        "0x0000E66A",
+        "0xFFFF3581",
+        "0xFFFFD437",
+        "0xFFFFD525",
+        "0xFFFF2870",
+        "0xFFFF89A4",
+        "0xFFFFF61B",
+        "0xFFFFED60"
+      ],
+      "metrics": {
+        "close_pass_count": 3,
+        "collision_margin": 0.2421319357067213,
+        "compact_fraction": 0.14166666666666666,
+        "exchange_count": 3,
+        "max_rms_radius": 9.311544336259011,
+        "mean_pair_distance": 5.297065694613355,
+        "mean_rms_radius": 5.171081006450905,
+        "min_pair_distance": 0.3671319357067213,
+        "path_length": 40.53150640148249,
+        "radial_drift": 7.132633332963288,
+        "recurrence_error": 8.06221052710799,
+        "survived_ratio": 0.334228515625,
+        "winding_radians": 7.015019358471024
+      },
+      "request": {
+        "crossover_q16": 57344,
+        "max_gen": 64,
+        "mutation_q16": 20480,
+        "seed0": 806238907,
+        "seed1": 3726378372,
+        "steps": 65536
+      }
+    }
+  ]
+}

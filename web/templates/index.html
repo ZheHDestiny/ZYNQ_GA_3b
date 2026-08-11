@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GA3B ORBIT LAB · FPGA 三体轨道实验室</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/overrides.css">
+</head>
+<body>
+  <div class="sky" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="mission-bar">
+    <div class="wordmark"><span class="insignia">G3</span><div><strong>ORBIT LAB</strong><small>GA3B / ZYNQ-7020 FLIGHT CONSOLE</small></div></div>
+    <nav><button id="navOrbit" class="nav-active">轨道实验</button><button id="navTelemetry">性能遥测</button><button id="navSystem">系统信息</button><button id="navReadme">使用指南</button></nav>
+    <div class="link-state"><span id="statusDot" class="signal waiting"></span><div><strong id="statusText">LINKING</strong><small id="statusSub">等待 UART 遥测</small></div><button id="refreshHealth" title="刷新">↻</button></div>
+  </header>
+
+  <main class="console">
+    <aside class="control-deck glass">
+      <div class="deck-head"><div><span class="kicker">MISSION CONTROL</span><h1>三体轨道搜索</h1></div><span class="live-tag">PL 100 MHz</span></div>
+
+      <div class="mode-switch"><button id="searchMode" class="active">FPGA 搜索</button><button id="customMode">自定义初态</button></div>
+
+      <section id="searchPanel">
+        <label class="field"><span>演化代数 <b>MAX_GEN</b></span><input id="maxGen" type="number" min="1" max="256" value="8"></label>
+        <label class="field"><span>积分窗口 <b>STEPS</b></span><input id="steps" type="number" min="1" max="65536" value="4096"></label>
+        <div class="field-pair">
+          <label class="field"><span>变异率 <b>Q16 十进制</b></span><input id="mutation" value="16384"></label>
+          <label class="field"><span>交叉率 <b>Q16 十进制</b></span><input id="crossover" value="53248"></label>
+        </div>
+        <div class="field-pair">
+          <label class="field"><span>Seed A（有符号十进制）</span><input id="seed0" value="305419896"></label>
+          <label class="field"><span>Seed B（有符号十进制）</span><input id="seed1" value="-2023406815"></label>
+        </div>
+      </section>
+
+      <section id="customPanel" class="hidden">
+        <p class="section-note">输入太阳 α、β 的质心系初态；太阳 γ 由质心和总动量约束推导。</p>
+        <div class="body-input"><span>太阳 α</span><div class="quad"><label>x₀<input id="x0" value="0.970004"></label><label>y₀<input id="y0" value="-0.243088"></label><label>vx₀<input id="vx0" value="0.466204"></label><label>vy₀<input id="vy0" value="0.432366"></label></div></div>
+        <div class="body-input"><span>太阳 β</span><div class="quad"><label>x₁<input id="x1" value="-0.970004"></label><label>y₁<input id="y1" value="0.243088"></label><label>vx₁<input id="vx1" value="0.466204"></label><label>vy₁<input id="vy1" value="0.432366"></label></div></div>
+        <label class="field"><span>重放步数 <b>MAX 131072</b></span><input id="customSteps" type="number" min="1" max="131072" value="8192"></label>
+        <div id="customDerived" class="derived">太阳 γ：等待校验</div>
+      </section>
+
+      <div id="validationBox" class="validation ok"><span>✓</span><div><strong id="validationTitle">参数可提交</strong><small id="validationText">预计服务时间正在计算</small></div></div>
+      <button id="openPresets" class="outline preset-button">选择模范解</button>
+      <button id="runSearch" class="launch"><span id="launchLabel">启动 FPGA 搜索</span><i>LAUNCH</i></button>
+      <button id="runSelftest" class="outline">运行板端自检</button>
+      <button id="openReadmeSecondary" class="outline">打开网页版使用指南</button>
+    </aside>
+
+    <section class="view-deck glass">
+      <div class="view-header">
+        <div><span class="kicker">TRAJECTORY / CENTER-OF-MASS FRAME</span><h2 id="trajectoryTitle">最优候选轨迹</h2></div>
+        <div class="play-tools">
+          <button id="playPause" title="播放/暂停">Ⅱ</button>
+          <input id="timeline" type="range" min="0" max="1" value="0">
+          <span id="stepLabel">T+000000</span>
+          <label class="speed">速度<select id="playbackSpeed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label>
+        </div>
+      </div>
+
+      <div class="space-view">
+        <canvas id="orbitCanvas"></canvas>
+        <div class="reticle"><i></i><i></i></div>
+        <div id="emptyState" class="empty-state"><span class="planet-glyph"></span><strong>NO TRAJECTORY DATA</strong><small>选择任务目标并启动搜索</small></div>
+        <div class="axis-label x">COM-X</div><div class="axis-label y">COM-Y</div>
+        <div class="body-legend"><span><i class="alpha"></i>SUN α</span><span><i class="beta"></i>SUN β</span><span><i class="gamma"></i>SUN γ</span></div>
+        <div id="windowBadge" class="window-badge">FULL TRAJECTORY</div>
+        <div id="executionBadge" class="execution-badge">FPGA HARDWARE SEARCH</div>
+      </div>
+
+      <div class="telemetry">
+        <div><span>ROUND TRIP</span><strong id="resultLatency">—</strong><small>端到端</small></div>
+        <div><span>FITNESS（十进制）</span><strong id="resultFitness">—</strong><small id="profileLabel">未选择</small></div>
+        <div><span>SURVIVAL</span><strong id="resultSteps">—</strong><small>积分步</small></div>
+        <div><span>THROUGHPUT</span><strong id="resultThroughput">—</strong><small>candidate eval/s</small></div>
+        <div><span>COMPACTNESS</span><strong id="resultCompact">—</strong><small>紧凑驻留率</small></div>
+      </div>
+    </section>
+
+    <section class="objective-deck glass">
+      <div class="section-head"><div><span class="kicker">OBJECTIVE PROFILES</span><h2>选择物理目标</h2></div><span id="candidateLabel">1 CANDIDATE</span></div>
+      <div id="fitnessProfiles" class="profile-grid"></div>
+    </section>
+
+    <section class="data-deck glass">
+      <div class="tab-head"><button id="tabGenes" class="active">初始条件</button><button id="tabMetrics">轨迹指标</button></div>
+      <div id="genes" class="gene-grid tab-panel"><p>等待任务结果</p></div>
+      <div id="metricChips" class="metric-chips tab-panel hidden"></div>
+    </section>
+
+    <section class="perf-deck glass">
+      <div class="section-head"><div><span class="kicker">COMPUTE TELEMETRY</span><h2>性能对比探针</h2></div><button id="runBenchmark" class="mini">RUN PROBE</button></div>
+      <div id="perfBars" class="perf-bars"><p>比较 FPGA 完整链路、Python 串行与 NumPy 批处理。</p></div>
+      <div id="probeStatus" class="probe-status">标准化探针：8 代、8192 积分步、2 次板端采样、固定 seed。实板典型耗时约 6 秒，负载独立于上方搜索参数。</div>
+      <p id="perfNote" class="fineprint">探针边界不同，不以代理负载冒充算法等价加速比。</p>
+    </section>
+  </main>
+  <dialog id="systemDialog" class="info-dialog">
+    <div class="dialog-head"><div><span class="kicker">SYSTEM / LIVE CAPABILITIES</span><h2>系统信息</h2></div><button data-close="systemDialog">×</button></div>
+    <div id="systemContent" class="dialog-content"><p>正在读取开发板和服务能力……</p></div>
+  </dialog>
+  <dialog id="readmeDialog" class="info-dialog readme-dialog">
+    <div class="dialog-head"><div><span class="kicker">WEB QUICK START</span><h2>GA3B 网页版 README</h2></div><button data-close="readmeDialog">×</button></div>
+    <div class="dialog-content readme-content">
+      <section><b>01</b><div><h3>确认链路</h3><p>右上角显示 <code>BOARD ONLINE</code> 才能运行 FPGA 搜索。若显示 LINK DOWN，请确认 SD 冷启动、USB UART、COM 端口和 PC 后端；关闭所有会占用串口的终端。</p></div></section>
+      <section><b>02</b><div><h3>选择目标</h3><p>长时生存允许彼此远离；安全擦掠奖励近距离掠过；三星纠缠奖励绕转、换位和紧凑驻留；近周期回归奖励末态构型返回。后三项会搜索多组 FPGA 候选再由 PC 重排。</p></div></section>
+      <section><b>03</b><div><h3>等待承载估算</h3><p>参数改变后，提交按钮会暂时锁定。只有预计时间不超过服务预算时才允许上传。较长窗口更容易看到完整事件，但需要等待更多时间。</p></div></section>
+      <section><b>04</b><div><h3>理解高亮窗口</h3><p>动画默认展示完整计算结果中最富有近掠或纠缠特征的一段连续物理轨迹。右下角会显示原始 step 范围；存活数、fitness 和目标判据始终来自完整轨迹，不会因展示裁剪而改变。</p></div></section>
+      <section><b>05</b><div><h3>检查结果是否吻合</h3><p>如果状态显示“仅为当前候选中的最优近似”，表示候选没有达到所选物理判据。不要仅凭动画把它解释为周期解或稳定纠缠。</p></div></section>
+      <section><b>06</b><div><h3>自定义初态</h3><p>可输入太阳 α、β 的位置和速度，太阳 γ 自动满足质心与总动量约束。该模式是 PC 上的 RTL 同规则重放，不是 FPGA 搜索。默认经典 8 字初态可用于观察一段明显纠缠。</p></div></section>
+      <section><b>07</b><div><h3>播放和遥测</h3><p>使用时间轴、暂停和 0.25×–8× 速度检查近心点过程；点击顶部“性能遥测”跳转到性能探针，“系统信息”查看当前板卡、profile 和服务限制。</p></div></section>
+      <section><b>08</b><div><h3>十进制参数语义</h3><p><code>x/y</code> 是质心坐标系中的归一化位置，<code>vx/vy</code> 是归一化速度。页面显示的是 Q16.16 解码值；旁边的 Q16 整数等于物理值乘 65536。变异率和交叉率输入 0–65535，概率等于输入值除以 65536。Seed 使用有符号十进制显示，传入 FPGA 时按同一 32 位二进制补码解释。</p></div></section>
+      <section><b>09</b><div><h3>模范解与本地保存</h3><p>“选择模范解”会用固定 seed 再次启动真实 FPGA 搜索。每次搜索和自定义重放均自动保存到本地 SQLite。长时生存与近周期回归都是有限窗口标签，不代表数学上的无限稳定或严格周期证明。</p></div></section>
+      <aside><strong>只有静态前端怎么办？</strong><p>若页面能打开但所有 API 都失败，说明 Flask 后端没有运行。请在项目根目录执行 <code>.\scripts\run\run_v1_web_demo.ps1 -Port COM13</code>。单独双击 HTML 文件不能访问 FPGA。</p></aside>
+    </div>
+  </dialog>
+  <dialog id="presetDialog" class="info-dialog">
+    <div class="dialog-head"><div><span class="kicker">VERIFIED BOARD TEMPLATES</span><h2>模范解</h2></div><button data-close="presetDialog">×</button></div>
+    <div class="dialog-content">
+      <p class="fineprint">每个模范解都会把实测固定 seed 重新提交给 FPGA，而不是播放伪造动画。分类只描述有限积分窗口。</p>
+      <div id="presetGrid" class="preset-grid"><p>正在读取模范解……</p></div>
+    </div>
+  </dialog>
+  <div id="toast" class="toast"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

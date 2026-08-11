@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "workload": {
+    "max_gen": 2,
+    "steps": 1024,
+    "hardware_candidate_evals": 96,
+    "hardware_runs": 3
+  },
+  "probes": [
+    {
+      "name": "Zynq-7020 FPGA",
+      "kind": "complete GA + DMA + UART end-to-end",
+      "elapsed_ms": 36.23406666641434,
+      "candidate_evals": 96,
+      "candidate_evals_per_second": 2649.440397728892,
+      "samples_ms": [
+        36.953700000594836,
+        35.68919999815989,
+        36.05930000048829
+      ]
+    },
+    {
+      "name": "Python scalar",
+      "kind": "fitness-only proxy",
+      "elapsed_ms": 1180.0675999984378,
+      "candidate_evals": 96,
+      "candidate_evals_per_second": 81.35127174081136,
+      "checksum": 89760
+    },
+    {
+      "name": "NumPy batch",
+      "kind": "vectorized fitness-only proxy",
+      "available": true,
+      "elapsed_ms": 192.87080000140122,
+      "candidate_evals": 96,
+      "candidate_evals_per_second": 497.74253022905776,
+      "checksum": 89760
+    }
+  ],
+  "comparison_note": "FPGA probe includes population initialization, GA selection/reproduction, AXI DMA and UART. Python/NumPy probes replay only the returned chromosome's fitness workload for the same number of candidate evaluations; they are diagnostic proxies, not an algorithm-identical speedup claim."
+}

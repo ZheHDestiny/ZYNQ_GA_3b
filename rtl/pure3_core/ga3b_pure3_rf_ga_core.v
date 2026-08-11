@@ -57,6 +57,11 @@ module ga3b_pure3_rf_ga_core #(
     localparam [4:0] S_REPRO_READ_A=5'd9, S_REPRO_CMP_A1=5'd10, S_REPRO_CMP_A2=5'd11;
     localparam [4:0] S_REPRO_READ_B=5'd12, S_REPRO_CMP_B1=5'd13, S_REPRO_CMP_B2=5'd14;
     localparam [4:0] S_REPRO_REQ=5'd15, S_REPRO_WR=5'd16, S_NEXT_GEN=5'd17, S_DONE=5'd18;
+    // The population RAM has registered addresses at this level and registered
+    // outputs inside ga3b_pure3_rf_pop_ram.  Keep an explicit latency cycle
+    // between issuing an address and consuming dout; otherwise a new task can
+    // observe the previous task's final RAM address/data.
+    localparam [4:0] S_LOAD_WAIT=5'd19, S_REPRO_WAIT=5'd20;
 
     reg [4:0] state;
     reg active_bank;
@@ -161,8 +166,9 @@ module ga3b_pure3_rf_ga_core #(
                 end
                 S_LOAD_REQ: begin
                     if (!active_bank) a_addr_a <= {indiv_idx, gene_idx}; else b_addr_a <= {indiv_idx, gene_idx};
-                    state <= S_LOAD_CAP;
+                    state <= S_LOAD_WAIT;
                 end
+                S_LOAD_WAIT: state <= S_LOAD_CAP;
                 S_LOAD_CAP: begin
                     lane_chromosome_flat[gene_idx*GENE_WIDTH +: GENE_WIDTH] <= active_bank ? b_dout_a : a_dout_a;
                     if (gene_idx == 3'd7) begin gene_idx <= 0; state <= S_LANE_START; end
@@ -232,8 +238,9 @@ module ga3b_pure3_rf_ga_core #(
                         if (!active_bank) begin a_addr_a <= {pa,gene_idx}; a_addr_b <= {pb,gene_idx}; end
                         else begin b_addr_a <= {pa,gene_idx}; b_addr_b <= {pb,gene_idx}; end
                     end
-                    state <= S_REPRO_WR;
+                    state <= S_REPRO_WAIT;
                 end
+                S_REPRO_WAIT: state <= S_REPRO_WR;
                 S_REPRO_WR: begin
                     if (child_idx == 5'd0) child_gene = best_chromosome_flat[gene_idx*GENE_WIDTH +: GENE_WIDTH];
                     else begin

@@ -1,0 +1,514 @@
+{
+  "parameters": {
+    "max_gen": 2,
+    "steps": 1024,
+    "mutation_q16": "0x1800",
+    "crossover_q16": "0xC000"
+  },
+  "top": [
+    {
+      "seed0": "0x24EE642B",
+      "seed1": "0x6CF01D96",
+      "score": 2.2328188377255622,
+      "survived": 1024,
+      "path": 15.005887711037222,
+      "turns": 1.1740276185189367,
+      "mean_pair": 6.996407570637331,
+      "min_pair": 2.2954905637770424,
+      "max_pair": 15.445256982650747,
+      "genes_raw": [
+        "0x00000000",
+        "0xFFFE4844",
+        "0xFFFF6B89",
+        "0xFFFF7512",
+        "0xFFFE4D1F",
+        "0x00000000",
+        "0xFFFF4447",
+        "0xFFFF3055"
+      ]
+    },
+    {
+      "seed0": "0x5DDAB72A",
+      "seed1": "0x521E7880",
+      "score": 1.9349518844346076,
+      "survived": 1024,
+      "path": 13.958002532999387,
+      "turns": 0.9007120194683416,
+      "mean_pair": 7.429113197592219,
+      "min_pair": 1.2151582449193012,
+      "max_pair": 16.02745760258778,
+      "genes_raw": [
+        "0xFFFE54E2",
+        "0x00000000",
+        "0xFFFF7420",
+        "0xFFFF522A",
+        "0xFFFE7773",
+        "0xFFFE6D45",
+        "0xFFFF5A80",
+        "0xFFFF643A"
+      ]
+    },
+    {
+      "seed0": "0x3C9F2360",
+      "seed1": "0x603A83C3",
+      "score": 1.7008566675168069,
+      "survived": 973,
+      "path": 15.416989862292613,
+      "turns": 1.1928483295886898,
+      "mean_pair": 8.12792244520611,
+      "min_pair": 1.5920686445923122,
+      "max_pair": 17.409678074471774,
+      "genes_raw": [
+        "0xFFFE74AA",
+        "0xFFFE797C",
+        "0xFFFF7599",
+        "0xFFFF0000",
+        "0xFFFE0000",
+        "0x00000000",
+        "0xFFFF72C9",
+        "0xFFFF4856"
+      ]
+    },
+    {
+      "seed0": "0x27836B97",
+      "seed1": "0x41200EA9",
+      "score": 1.598375857470594,
+      "survived": 1024,
+      "path": 12.85724402052143,
+      "turns": 0.3190819750253615,
+      "mean_pair": 7.993571706843802,
+      "min_pair": 0.2437013130630882,
+      "max_pair": 16.686476381172962,
+      "genes_raw": [
+        "0xFFFE199A",
+        "0xFFFE8316",
+        "0xFFFF7B0C",
+        "0xFFFF77C3",
+        "0xFFFE57E4",
+        "0xFFFE7F95",
+        "0xFFFF7EA2",
+        "0xFFFF46FE"
+      ]
+    },
+    {
+      "seed0": "0x81933786",
+      "seed1": "0x36B1A3F5",
+      "score": 1.4481531116538569,
+      "survived": 1013,
+      "path": 12.503480402738896,
+      "turns": 0.1402966530647327,
+      "mean_pair": 8.202609660652673,
+      "min_pair": 0.5195217566411569,
+      "max_pair": 16.93138728434646,
+      "genes_raw": [
+        "0xFFFE35B6",
+        "0xFFFE7BB3",
+        "0xFFFF7C62",
+        "0xFFFF71D8",
+        "0xFFFE6691",
+        "0xFFFE0000",
+        "0xFFFF6978",
+        "0xFFFF6729"
+      ]
+    },
+    {
+      "seed0": "0xE5BFDE74",
+      "seed1": "0xE2A82C7B",
+      "score": 1.412160026323776,
+      "survived": 923,
+      "path": 14.996797673371832,
+      "turns": 1.019051210328204,
+      "mean_pair": 8.055605166703353,
+      "min_pair": 0.7711513805617684,
+      "max_pair": 17.098152089730746,
+      "genes_raw": [
+        "0xFFFE31A9",
+        "0xFFFE0000",
+        "0xFFFF6A1B",
+        "0xFFFF51E4",
+        "0xFFFE5F48",
+        "0x00000000",
+        "0xFFFF58AE",
+        "0xFFFF0000"
+      ]
+    },
+    {
+      "seed0": "0x88DDB596",
+      "seed1": "0xA3AEB3EC",
+      "score": 1.4097479450395742,
+      "survived": 1002,
+      "path": 12.527485068441614,
+      "turns": 0.5385312642567865,
+      "mean_pair": 8.433704197830622,
+      "min_pair": 0.3511351120071748,
+      "max_pair": 17.11241675946451,
+      "genes_raw": [
+        "0xFFFE77DB",
+        "0xFFFE5880",
+        "0xFFFF0000",
+        "0xFFFF7703",
+        "0xFFFE5DD1",
+        "0xFFFE0000",
+        "0x00000000",
+        "0xFFFF67D6"
+      ]
+    },
+    {
+      "seed0": "0xC30BA448",
+      "seed1": "0xBA2A0D7D",
+      "score": 1.3786430066009374,
+      "survived": 1011,
+      "path": 12.446542060011161,
+      "turns": 0.05707578452888118,
+      "mean_pair": 8.47845679090158,
+      "min_pair": 0.5850004310601864,
+      "max_pair": 17.05755428978653,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE5712",
+        "0xFFFF5F5E",
+        "0xFFFF7834",
+        "0xFFFE79D9",
+        "0xFFFE0000",
+        "0xFFFF7FEC",
+        "0xFFFF696F"
+      ]
+    },
+    {
+      "seed0": "0xED9B2590",
+      "seed1": "0xDC281F8A",
+      "score": 1.371411144871231,
+      "survived": 937,
+      "path": 13.652142236177015,
+      "turns": 0.8881467935966554,
+      "mean_pair": 7.873146162792979,
+      "min_pair": 0.9063899009569075,
+      "max_pair": 16.18163039490446,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE0000",
+        "0xFFFF89C7",
+        "0xFFFF794E",
+        "0xFFFE6FB5",
+        "0x00000000",
+        "0xFFFF3B26",
+        "0xFFFF1C37"
+      ]
+    },
+    {
+      "seed0": "0xC3C48FAA",
+      "seed1": "0xB31819E8",
+      "score": 1.3251904109670993,
+      "survived": 972,
+      "path": 13.016664318811841,
+      "turns": 0.07545617959295692,
+      "mean_pair": 8.199492679587694,
+      "min_pair": 0.2535655987252916,
+      "max_pair": 17.07668441152771,
+      "genes_raw": [
+        "0xFFFE694E",
+        "0xFFFE74F8",
+        "0xFFFF61DB",
+        "0xFFFF4B83",
+        "0xFFFE199A",
+        "0xFFFE3324",
+        "0xFFFF6951",
+        "0xFFFF77DD"
+      ]
+    },
+    {
+      "seed0": "0x73663B67",
+      "seed1": "0x59B9F1CC",
+      "score": 1.30236635745078,
+      "survived": 972,
+      "path": 12.859977479305321,
+      "turns": 0.09260142596937992,
+      "mean_pair": 8.255933879701937,
+      "min_pair": 0.2443181470146744,
+      "max_pair": 17.046141908185888,
+      "genes_raw": [
+        "0xFFFE6308",
+        "0xFFFE677E",
+        "0xFFFF5AE9",
+        "0xFFFF6588",
+        "0xFFFE40D7",
+        "0xFFFE0000",
+        "0xFFFF68DF",
+        "0xFFFF6CA7"
+      ]
+    },
+    {
+      "seed0": "0x555053CC",
+      "seed1": "0x51EC7454",
+      "score": 1.2947324372022564,
+      "survived": 995,
+      "path": 12.275046596744819,
+      "turns": 0.13606223561214925,
+      "mean_pair": 8.544272683712245,
+      "min_pair": 0.5001041363979928,
+      "max_pair": 17.350255529023972,
+      "genes_raw": [
+        "0xFFFE2852",
+        "0xFFFE0052",
+        "0xFFFF71F7",
+        "0xFFFF54D8",
+        "0xFFFE0000",
+        "0xFFFE79D5",
+        "0xFFFF798D",
+        "0xFFFF7F4C"
+      ]
+    },
+    {
+      "seed0": "0x4A3F1BBB",
+      "seed1": "0xAD854B4F",
+      "score": 1.281027930267858,
+      "survived": 999,
+      "path": 11.967312823727179,
+      "turns": 0.155404736433983,
+      "mean_pair": 8.536946514675087,
+      "min_pair": 0.3883514404296875,
+      "max_pair": 17.14945443286405,
+      "genes_raw": [
+        "0xFFFE636B",
+        "0xFFFE0000",
+        "0xFFFF73DB",
+        "0xFFFF7594",
+        "0xFFFE0000",
+        "0xFFFE0000",
+        "0xFFFF6739",
+        "0xFFFF7F00"
+      ]
+    },
+    {
+      "seed0": "0x7525B691",
+      "seed1": "0x193211D4",
+      "score": 1.2712591391070684,
+      "survived": 1001,
+      "path": 11.73553011569304,
+      "turns": 0.06829422515736372,
+      "mean_pair": 8.423432686508054,
+      "min_pair": 0.28287715938351704,
+      "max_pair": 16.90186184712595,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE48A1",
+        "0xFFFF712F",
+        "0xFFFF7304",
+        "0xFFFE199A",
+        "0xFFFE0000",
+        "0xFFFF7D48",
+        "0xFFFF79FA"
+      ]
+    },
+    {
+      "seed0": "0x839C27C3",
+      "seed1": "0x7CB75FD2",
+      "score": 1.222691980200916,
+      "survived": 949,
+      "path": 12.641757294874179,
+      "turns": 0.28556557846799047,
+      "mean_pair": 8.1657010490756,
+      "min_pair": 0.12748030182254896,
+      "max_pair": 16.88419690193373,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE6F50",
+        "0xFFFF7A45",
+        "0xFFFF5FBF",
+        "0xFFFE8747",
+        "0xFFFE18BE",
+        "0xFFFF483A",
+        "0xFFFF71E6"
+      ]
+    },
+    {
+      "seed0": "0x53B05346",
+      "seed1": "0x66D8403D",
+      "score": 1.2082976017319236,
+      "survived": 950,
+      "path": 12.81828478670165,
+      "turns": 0.13814498758367755,
+      "mean_pair": 8.312141048425042,
+      "min_pair": 0.3997699538202095,
+      "max_pair": 17.24634961360865,
+      "genes_raw": [
+        "0xFFFE6C51",
+        "0xFFFE0000",
+        "0xFFFF73C3",
+        "0xFFFF7527",
+        "0xFFFE4300",
+        "0xFFFE5DDC",
+        "0xFFFF446F",
+        "0xFFFF5D14"
+      ]
+    },
+    {
+      "seed0": "0x2EFCB851",
+      "seed1": "0x41B22D7B",
+      "score": 1.1969085375985917,
+      "survived": 946,
+      "path": 12.721460236774385,
+      "turns": 0.15859158927743167,
+      "mean_pair": 8.234576796883276,
+      "min_pair": 0.08836999605902794,
+      "max_pair": 16.99094989413869,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE4EB2",
+        "0xFFFF6F20",
+        "0xFFFF5D47",
+        "0xFFFE71AD",
+        "0xFFFE3D4A",
+        "0xFFFF5A16",
+        "0xFFFF65D4"
+      ]
+    },
+    {
+      "seed0": "0xBE58A6A5",
+      "seed1": "0xBBE8FF8C",
+      "score": 1.196721676705589,
+      "survived": 965,
+      "path": 12.14643076869149,
+      "turns": 0.12206159489219282,
+      "mean_pair": 8.32985818210538,
+      "min_pair": 0.34531004293137224,
+      "max_pair": 16.79255155291415,
+      "genes_raw": [
+        "0xFFFE4F48",
+        "0xFFFE4BAB",
+        "0xFFFF7F19",
+        "0xFFFF5223",
+        "0xFFFE0000",
+        "0xFFFE2491",
+        "0xFFFF6889",
+        "0xFFFF7B88"
+      ]
+    },
+    {
+      "seed0": "0x8C47828E",
+      "seed1": "0x254F5003",
+      "score": 1.19009954040303,
+      "survived": 964,
+      "path": 12.028802942256426,
+      "turns": 0.032360235185509456,
+      "mean_pair": 8.205458015659623,
+      "min_pair": 0.36729949811853635,
+      "max_pair": 16.63041001867531,
+      "genes_raw": [
+        "0xFFFE4C60",
+        "0xFFFE8AC4",
+        "0xFFFF5EFA",
+        "0xFFFF6E64",
+        "0xFFFE0C3F",
+        "0xFFFE0000",
+        "0xFFFF74D6",
+        "0xFFFF7731"
+      ]
+    },
+    {
+      "seed0": "0x1F6F4786",
+      "seed1": "0x3937AFE8",
+      "score": 1.1679341365182967,
+      "survived": 943,
+      "path": 12.3719138086142,
+      "turns": 0.22084786756596175,
+      "mean_pair": 8.17049922599607,
+      "min_pair": 0.28350251626148676,
+      "max_pair": 16.89275450207253,
+      "genes_raw": [
+        "0xFFFE5BB6",
+        "0xFFFE29A5",
+        "0xFFFF4D6E",
+        "0xFFFF6890",
+        "0xFFFE0000",
+        "0xFFFE775B",
+        "0xFFFF7EDA",
+        "0xFFFF6755"
+      ]
+    },
+    {
+      "seed0": "0xBA3E26B9",
+      "seed1": "0xD039C26D",
+      "score": 1.1647812747328623,
+      "survived": 933,
+      "path": 12.90359424116193,
+      "turns": 0.2723458917523627,
+      "mean_pair": 8.30622691977813,
+      "min_pair": 0.32444564975889645,
+      "max_pair": 17.398794754970464,
+      "genes_raw": [
+        "0xFFFE73AA",
+        "0xFFFE0000",
+        "0xFFFF31F0",
+        "0xFFFF64F2",
+        "0xFFFE4C2C",
+        "0xFFFE5287",
+        "0xFFFF7F3D",
+        "0xFFFF66DA"
+      ]
+    },
+    {
+      "seed0": "0x15557EDD",
+      "seed1": "0xFD5883A9",
+      "score": 1.1528438698892447,
+      "survived": 875,
+      "path": 14.044729127372328,
+      "turns": 1.2097441932849735,
+      "mean_pair": 8.00564504936625,
+      "min_pair": 1.773381697161716,
+      "max_pair": 17.009910464156075,
+      "genes_raw": [
+        "0xFFFE04BA",
+        "0xFFFE2C96",
+        "0xFFFF7E30",
+        "0xFFFF0000",
+        "0xFFFE6D27",
+        "0xFFFFE666",
+        "0xFFFF7CD8",
+        "0xFFFF350F"
+      ]
+    },
+    {
+      "seed0": "0x69318B89",
+      "seed1": "0xB07E154E",
+      "score": 1.1479573841217028,
+      "survived": 923,
+      "path": 12.981028151134677,
+      "turns": 0.30784030563376685,
+      "mean_pair": 8.227493582317804,
+      "min_pair": 0.19425563974429155,
+      "max_pair": 17.119202653737965,
+      "genes_raw": [
+        "0xFFFE6D67",
+        "0xFFFE0000",
+        "0xFFFF67A7",
+        "0xFFFF6824",
+        "0xFFFE7F53",
+        "0xFFFE315C",
+        "0xFFFF38DD",
+        "0xFFFF6990"
+      ]
+    },
+    {
+      "seed0": "0x79B8B39A",
+      "seed1": "0x961B0EAB",
+      "score": 1.1406358304924995,
+      "survived": 939,
+      "path": 12.553520847410269,
+      "turns": 0.06081550830162197,
+      "mean_pair": 8.27735422961516,
+      "min_pair": 0.49216581100026596,
+      "max_pair": 17.290538118541452,
+      "genes_raw": [
+        "0xFFFE40E4",
+        "0xFFFE0000",
+        "0xFFFF4E8D",
+        "0xFFFF4DDE",
+        "0xFFFE7B3C",
+        "0xFFFE6FAC",
+        "0xFFFF7B74",
+        "0xFFFF77FA"
+      ]
+    }
+  ]
+}

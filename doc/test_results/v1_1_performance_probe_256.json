@@ -1,0 +1,43 @@
+﻿{
+    "comparison_note":  "FPGA probe includes population initialization, GA selection/reproduction, AXI DMA and UART. Python/NumPy probes replay only the returned chromosome\u0027s fitness workload for the same number of candidate evaluations; they are diagnostic proxies, not an algorithm-identical speedup claim.",
+    "probes":  [
+                   {
+                       "candidate_evals":  96,
+                       "candidate_evals_per_second":  3086.262979211082,
+                       "elapsed_ms":  31.105579999712063,
+                       "kind":  "complete GA + DMA + UART end-to-end",
+                       "name":  "Zynq-7020 FPGA",
+                       "samples_ms":  [
+                                          31.048199998622295,
+                                          31.34230000068783,
+                                          31.27440000025672,
+                                          30.95719999691937,
+                                          30.905800002074102
+                                      ]
+                   },
+                   {
+                       "candidate_evals":  96,
+                       "candidate_evals_per_second":  315.63560132775154,
+                       "checksum":  24576,
+                       "elapsed_ms":  304.1482000007818,
+                       "kind":  "fitness-only proxy",
+                       "name":  "Python scalar"
+                   },
+                   {
+                       "available":  true,
+                       "candidate_evals":  96,
+                       "candidate_evals_per_second":  2143.842927636909,
+                       "checksum":  24576,
+                       "elapsed_ms":  44.77940000288072,
+                       "kind":  "vectorized fitness-only proxy",
+                       "name":  "NumPy batch"
+                   }
+               ],
+    "status":  "PASS",
+    "workload":  {
+                     "hardware_candidate_evals":  96,
+                     "hardware_runs":  5,
+                     "max_gen":  2,
+                     "steps":  256
+                 }
+}

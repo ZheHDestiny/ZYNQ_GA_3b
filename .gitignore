@@ -1,5 +1,5 @@
-# Local installation junction (full Vivado installation; never commit)
-tools/Vivado2023_2023.2/
+# Local tool copies/junctions (Vivado/Vitis/Tcl installations; never commit)
+/tools/
 
 # Vivado generated project state, runs, caches and logs
 vivado/runs/
@@ -21,6 +21,11 @@ vivado/**/*.bit
 vivado/**/*.bin
 vivado/**/*.ltx
 vivado/**/*.xsa
+.cache/
+*.xpr
+*.xsa
+*.bit
+*.ltx
 .Xil/
 *.jou
 *.log
@@ -67,14 +72,27 @@ vitis_workspace/
 **/BOOT.BIN
 **/fsbl.elf
 **/pmufw.elf
+*.o
+*.obj
+*.a
+*.lib
 
 # Python caches and temporary files
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+node_modules/
 *.tmp
 *.temp
+ps_app/host_backend/data/*.sqlite3
+ps_app/host_backend/data/*.sqlite3-*
+doc/test_results/ga3b_results.sqlite3
+doc/test_results/ga3b_results.sqlite3-*
 
 # IDE/user-local files
 .vscode/*.code-workspace

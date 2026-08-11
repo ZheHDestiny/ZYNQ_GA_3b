@@ -126,7 +126,12 @@ module ga3b_pure3_rf_accel_top #(
                 ST_IDLE: begin
                     m_axis_tvalid <= 1'b0; m_axis_tlast <= 1'b0; s_axis_tready <= 1'b1;
                     rx_word <= 0; bound_idx <= 0; bound_phase <= 0; proto_error <= 1'b0;
-                    if (s_axis_tvalid) begin
+                    // Consume the first word only on a real AXI-Stream
+                    // handshake.  After a result packet, TREADY is still low
+                    // for the first IDLE cycle; testing VALID alone consumed
+                    // the next task's magic one cycle before the sender saw
+                    // READY, so the same beat was consumed again as word 1.
+                    if (s_axis_tvalid && s_axis_tready) begin
                         irq_done_r <= 1'b0;
                         if (s_axis_tdata != MAGIC_TASK) proto_error <= 1'b1;
                         rx_word <= 8'd1;

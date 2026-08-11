@@ -1,0 +1,362 @@
+{
+  "parameters": {
+    "max_gen": 2,
+    "steps": 4096,
+    "mutation_q16": "0x1800",
+    "crossover_q16": "0xC000"
+  },
+  "top": [
+    {
+      "seed0": "0xB60228FF",
+      "seed1": "0xBE98D64D",
+      "score": 0.3582291648978651,
+      "survived": 1014,
+      "path": 13.259160415492701,
+      "turns": 0.0831946310583298,
+      "mean_pair": 8.185900109646795,
+      "min_pair": 0.3700499023659691,
+      "max_pair": 17.14325768345365,
+      "latency_ms": 36.47089999867603,
+      "genes_raw": [
+        "0xFFFE5C5A",
+        "0xFFFE7CC1",
+        "0xFFFF5143",
+        "0xFFFF62FE",
+        "0xFFFE6744",
+        "0xFFFE190E",
+        "0xFFFF75D1",
+        "0xFFFF72BF"
+      ]
+    },
+    {
+      "seed0": "0xFDD90D4F",
+      "seed1": "0xE754671D",
+      "score": 0.3519159000852752,
+      "survived": 995,
+      "path": 12.9062005283732,
+      "turns": 0.33141675449619656,
+      "mean_pair": 8.000378545362985,
+      "min_pair": 0.41272987639823944,
+      "max_pair": 16.67465874148683,
+      "latency_ms": 37.66929999983404,
+      "genes_raw": [
+        "0xFFFE988D",
+        "0xFFFE732D",
+        "0xFFFF5194",
+        "0xFFFF7A89",
+        "0xFFFE6708",
+        "0xFFFE0000",
+        "0xFFFF6047",
+        "0xFFFF795D"
+      ]
+    },
+    {
+      "seed0": "0x19DE5D4C",
+      "seed1": "0x08D9DB7A",
+      "score": 0.33142792838277146,
+      "survived": 992,
+      "path": 12.349800213302721,
+      "turns": 0.22521032414544884,
+      "mean_pair": 8.090315665345287,
+      "min_pair": 0.4319842877826857,
+      "max_pair": 16.62012989450216,
+      "latency_ms": 36.489699999947334,
+      "genes_raw": [
+        "0xFFFE40F5",
+        "0xFFFE6CF5",
+        "0xFFFF6780",
+        "0xFFFF7EBC",
+        "0xFFFE77F3",
+        "0xFFFE0000",
+        "0xFFFF5B9B",
+        "0xFFFF7AC4"
+      ]
+    },
+    {
+      "seed0": "0xC0556052",
+      "seed1": "0xCA5034AB",
+      "score": 0.325875606087906,
+      "survived": 967,
+      "path": 12.338340781760412,
+      "turns": 0.09416633114458683,
+      "mean_pair": 7.965927681640054,
+      "min_pair": 0.3089939650350655,
+      "max_pair": 16.528998438631856,
+      "latency_ms": 37.176300000282936,
+      "genes_raw": [
+        "0xFFFE67F1",
+        "0xFFFE71D1",
+        "0xFFFF5A10",
+        "0xFFFF5CDA",
+        "0xFFFE0000",
+        "0xFFFE757A",
+        "0xFFFF765F",
+        "0xFFFF7EC5"
+      ]
+    },
+    {
+      "seed0": "0xF80EE6D3",
+      "seed1": "0x470EF94B",
+      "score": 0.3220719551705088,
+      "survived": 971,
+      "path": 12.728732223805302,
+      "turns": 0.14652342967255771,
+      "mean_pair": 8.41210230534709,
+      "min_pair": 0.6429302504825173,
+      "max_pair": 17.20524845979223,
+      "latency_ms": 35.136500002408866,
+      "genes_raw": [
+        "0xFFFE66B1",
+        "0xFFFE8AA4",
+        "0xFFFF538C",
+        "0xFFFF7AB5",
+        "0xFFFE0000",
+        "0xFFFE0A04",
+        "0xFFFF7E84",
+        "0xFFFF5151"
+      ]
+    },
+    {
+      "seed0": "0x39DA127E",
+      "seed1": "0xBF2641A5",
+      "score": 0.3183669728055188,
+      "survived": 935,
+      "path": 12.511503873124836,
+      "turns": 0.2946887609106361,
+      "mean_pair": 8.055358826418045,
+      "min_pair": 0.31414194955501495,
+      "max_pair": 16.60065861521734,
+      "latency_ms": 36.511300000711344,
+      "genes_raw": [
+        "0xFFFE600A",
+        "0xFFFE0000",
+        "0xFFFF5C5C",
+        "0xFFFF7480",
+        "0xFFFE743B",
+        "0xFFFE58C8",
+        "0xFFFF4CC7",
+        "0xFFFF7562"
+      ]
+    },
+    {
+      "seed0": "0x846B98D0",
+      "seed1": "0x28D60DBA",
+      "score": 0.31750995755687567,
+      "survived": 958,
+      "path": 12.22916349707898,
+      "turns": 0.14778423945138908,
+      "mean_pair": 8.05188880954559,
+      "min_pair": 0.21030502789718988,
+      "max_pair": 16.712060456446146,
+      "latency_ms": 35.89330000249902,
+      "genes_raw": [
+        "0xFFFE521F",
+        "0xFFFE3731",
+        "0xFFFF7035",
+        "0xFFFF4600",
+        "0xFFFE3F4D",
+        "0xFFFE69A2",
+        "0xFFFF7F3A",
+        "0xFFFF78D6"
+      ]
+    },
+    {
+      "seed0": "0x0850463E",
+      "seed1": "0x0D3787A3",
+      "score": 0.31572541752327987,
+      "survived": 1002,
+      "path": 11.895747567081678,
+      "turns": 0.020479608670758598,
+      "mean_pair": 8.223355220852287,
+      "min_pair": 0.3110272456679773,
+      "max_pair": 16.73241223016976,
+      "latency_ms": 36.864499998046085,
+      "genes_raw": [
+        "0xFFFE57AB",
+        "0xFFFE420F",
+        "0xFFFF787A",
+        "0xFFFF75DF",
+        "0xFFFE2B37",
+        "0xFFFE0000",
+        "0xFFFF77C5",
+        "0xFFFF6E8E"
+      ]
+    },
+    {
+      "seed0": "0x20F0965F",
+      "seed1": "0x6BDFEEEC",
+      "score": 0.3136281486649817,
+      "survived": 870,
+      "path": 13.293023327708998,
+      "turns": 0.22566467751110997,
+      "mean_pair": 8.063733612531417,
+      "min_pair": 0.16853188012860484,
+      "max_pair": 16.777135021596894,
+      "latency_ms": 34.694499998295214,
+      "genes_raw": [
+        "0xFFFE7C75",
+        "0xFFFE4CD3",
+        "0xFFFF73FB",
+        "0xFFFF184A",
+        "0xFFFE7678",
+        "0xFFFE778D",
+        "0xFFFF3874",
+        "0xFFFF7C34"
+      ]
+    },
+    {
+      "seed0": "0x20A909AC",
+      "seed1": "0x7943EB50",
+      "score": 0.3119330165411975,
+      "survived": 915,
+      "path": 12.951081869960555,
+      "turns": 0.14703716742927764,
+      "mean_pair": 8.316947547007613,
+      "min_pair": 0.40131475316103044,
+      "max_pair": 17.28277831257896,
+      "latency_ms": 35.10599999935948,
+      "genes_raw": [
+        "0xFFFE674A",
+        "0xFFFE0000",
+        "0xFFFF5588",
+        "0xFFFF46F2",
+        "0xFFFE5F41",
+        "0xFFFE666C",
+        "0xFFFF5732",
+        "0xFFFF7935"
+      ]
+    },
+    {
+      "seed0": "0xAD840836",
+      "seed1": "0xF4209987",
+      "score": 0.30693237357575215,
+      "survived": 910,
+      "path": 12.801955552028975,
+      "turns": 0.12955008769398235,
+      "mean_pair": 8.303994817122174,
+      "min_pair": 0.26008820805623173,
+      "max_pair": 17.182203924770953,
+      "latency_ms": 36.86999999990803,
+      "genes_raw": [
+        "0xFFFE408B",
+        "0xFFFE3443",
+        "0xFFFF6A9D",
+        "0xFFFF31AA",
+        "0xFFFE36F8",
+        "0xFFFE7627",
+        "0xFFFF5CAA",
+        "0xFFFF79B7"
+      ]
+    },
+    {
+      "seed0": "0x12345678",
+      "seed1": "0x87654321",
+      "score": 0.3042039060413378,
+      "survived": 935,
+      "path": 12.327426563853725,
+      "turns": 0.15585367988326393,
+      "mean_pair": 8.297154587526155,
+      "min_pair": 0.4255383801181399,
+      "max_pair": 16.955754532268152,
+      "latency_ms": 36.04210000048624,
+      "genes_raw": [
+        "0xFFFE6B67",
+        "0xFFFE0000",
+        "0xFFFF564D",
+        "0xFFFF67D0",
+        "0xFFFE1A3D",
+        "0xFFFE5041",
+        "0xFFFF6804",
+        "0xFFFF7226"
+      ]
+    },
+    {
+      "seed0": "0x0B1E3454",
+      "seed1": "0xF81E17EF",
+      "score": 0.30203447847897524,
+      "survived": 896,
+      "path": 12.250463106671262,
+      "turns": 0.32994478402942473,
+      "mean_pair": 7.968045591442185,
+      "min_pair": 0.47047383735819126,
+      "max_pair": 16.295048087428682,
+      "latency_ms": 36.31350000068778,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE81C0",
+        "0xFFFF7B00",
+        "0xFFFF5BB4",
+        "0xFFFE71F0",
+        "0xFFFE5AB5",
+        "0xFFFF7567",
+        "0xFFFF3C73"
+      ]
+    },
+    {
+      "seed0": "0xA06F8B83",
+      "seed1": "0xC9AC4E83",
+      "score": 0.30152486937731643,
+      "survived": 956,
+      "path": 12.057306615606391,
+      "turns": 0.14852760865191206,
+      "mean_pair": 8.37907037351554,
+      "min_pair": 0.27660182194144745,
+      "max_pair": 17.005203959560518,
+      "latency_ms": 34.64870000243536,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE199A",
+        "0xFFFF64CD",
+        "0xFFFF72CE",
+        "0xFFFE1B52",
+        "0xFFFE6015",
+        "0xFFFF7CCA",
+        "0xFFFF5F14"
+      ]
+    },
+    {
+      "seed0": "0xCC6720C1",
+      "seed1": "0xE62033B0",
+      "score": 0.2989847783369094,
+      "survived": 931,
+      "path": 11.980761564981673,
+      "turns": 0.20607550786565954,
+      "mean_pair": 8.17070844125076,
+      "min_pair": 0.5630453673020067,
+      "max_pair": 16.808717007306168,
+      "latency_ms": 35.84170000249287,
+      "genes_raw": [
+        "0xFFFE0000",
+        "0xFFFE3092",
+        "0xFFFF75AB",
+        "0xFFFF4321",
+        "0xFFFE8C8A",
+        "0xFFFE5096",
+        "0xFFFF7604",
+        "0xFFFF7B24"
+      ]
+    },
+    {
+      "seed0": "0x4F2292AF",
+      "seed1": "0x601345CA",
+      "score": 0.2989060872682768,
+      "survived": 942,
+      "path": 12.232115353896248,
+      "turns": 0.12581978194655896,
+      "mean_pair": 8.450199176873568,
+      "min_pair": 0.3873170525581989,
+      "max_pair": 17.120578503875098,
+      "latency_ms": 36.43550000197138,
+      "genes_raw": [
+        "0xFFFE60C8",
+        "0xFFFE0000",
+        "0xFFFF5BB9",
+        "0xFFFF6408",
+        "0xFFFE0000",
+        "0xFFFE379A",
+        "0xFFFF6F05",
+        "0xFFFF729A"
+      ]
+    }
+  ]
+}

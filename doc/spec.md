@@ -1,8 +1,8 @@
 # ZYNQ PS+PL 遗传算法搜索三体恒纪元初始条件规格说明（Spec）
 
-> 版本：v0.2.3 恒纪元目标修正版  
-> 状态：已将初版主目标改为“受限四体恒纪元搜索”；仍不编写 RTL/PS/后端/前端代码  
-> 输入依据：`ZYNQ_GA_3b/doc/requirements.md`、用户审核批注、用户补充说明“目标是复现《三体1》中魏成式从初始条件空间搜索稳定三体运动”  
+> 版本：v1.1.1 Pure3 多目标轨道实验室
+> 状态：受限四体仍是最终主目标；ZYNQ-7020 pure3 fallback 已完成 SD 冷启动、PS/DMA/PL、PC HTTP、多目标候选重排、自定义初态与 Web 动画闭环
+> 输入依据：`ZYNQ_GA_3b/doc/requirements.md`、用户审核批注、用户补充说明“目标是复现《三体1》中魏成式从初始条件空间搜索稳定三体运动”
 > 目标平台：正点原子领航者 ZYNQ 开发板，按 ZYNQ-7020 / `XC7Z020CLG400-2` 规划。
 
 ---
@@ -1402,25 +1402,32 @@ time_to_first_valid_solution
 - 明确保留 pure3 纯三体稳定性搜索作为资源不足时的退化方案。
 - 仍不编写 RTL/PS/后端/前端代码。
 
-### v0.3：RTL 完整实现（待 v0.2.3 审核通过后执行）
+### v0.3：RTL 实现与 7020 资源验证（已完成阶段性实现）
 
-- 完成 restricted4 恒纪元搜索核心 RTL。
+- 已实现 restricted4 恒纪元搜索核心 RTL，但完整配置在 xc7z020 上资源严重超限，保留为后续架构优化主线，不作为当前上板版本。
 - 完成 `sun3_integrator`、`test_planet_integrator`、`heng_era_metric_accumulator`、`pure3_fallback_fitness_lane`。
 - 完成 fitness lane、选择、交叉、变异、AXI DMA 接口。
-- 完成模块级和顶层仿真。
+- 已完成模块级和顶层仿真；当前可布线版本为 1-lane pure3 resource-fit fallback。
 
-### v1.0：最小可实现版本
+### v1.0：最小可实现版本（硬件闭环与寄存器探针已完成）
 
-- 完成 PC 参考模型。
-- 完成 ZYNQ PS board_agent 或命令行测试程序。
-- 完成 PC -> PS -> PL -> PS -> PC 端到端 restricted4 搜索。
-- 完成 pure3 fallback 验证。
+- 已生成并验证 `ga3b_v1_min.bit`、`ga3b_v1_min.xsa`，目标器件为 `xc7z020clg400-2`。
+- 已完成 PS7 + AXI DMA + AXI4-Lite + pure3 PL 顶层连接、综合、布局布线和 DRC。
+- 100 MHz post-route 时序通过：WNS `+0.410 ns`、TNS `0`；LUT 使用率 `63.35%`。
+- 已提供 standalone `ga3b_dma_smoke.c` 和 Linux `/dev/mem` 只读寄存器探针。
+- 已通过 SSH/SCP 在领航者 V2 开发板使用 FPGA Manager 动态加载 bitstream；寄存器实测 `version=0x00010000`、`profile=0x00000003`，输出 `GA3B_REG_PROBE_PASS`。
+- 已通过 XSCT API 从 XSA 创建 `ga3b_v1_platform`、`standalone_domain` 和 `ga3b_dma_smoke` 应用工程；BSP 已生成并包含 AXI DMA 驱动。
+- 已使用 Vitis 生成的 BSP、链接脚本与 ARM bare-metal 工具链完成 ELF 编译验证：`ELF32 ARM`，入口 `0x00100000`，输出 `GA3B_VITIS_BUILD_PASS`。
+- 已于 2026-08-10 通过 JTAG/XSDB 下载 bitstream 和 standalone ELF，并由 COM12 自动捕获到 `GA3B_DMA_SMOKE_PASS`。实测结果头为 `0x52534C54`，`steps=16`，未出现 DMA timeout 或协议错误。
+- 尚待完成：固定 seed 的多次重复性/结果一致性测试；随后可选择 standalone board_agent 路线，或实现 Linux DMA 驱动/UIO 与常驻 board_agent，完成 PC -> PS -> PL -> PS -> PC 端到端测试。
 
-### v1.1：Web 演示版本
+### v1.1：Web 演示版本（已完成 Pure3 最小闭环）
 
-- Windows Flask Host Backend。
-- 前端 2D Canvas。
-- 搜索空间输入、恒纪元搜索进度、最优太阳+行星初值展示和动画。
+- 已完成 Windows Flask Host Backend、UART 单实例所有权与断线重连。
+- 已完成同源 HTTP API：健康检查、自检、搜索和性能探针。
+- 已完成 2D Canvas 三体轨迹动画、搜索参数输入、返回基因和板端指标展示。
+- 已完成 FPGA 端到端、朴素 Python 与 NumPy 批处理三类性能探针。
+- 当前展示严格对应 7020 上的 Pure3 resource-fit fallback；受限四体行星动画留待资源优化版实现。
 
 ### v2.0：性能优化版本
 
@@ -1429,3 +1436,251 @@ time_to_first_valid_solution
 - 更长时间恒纪元评估。
 - 3D WebGL/Three.js 可视化。
 - 更复杂的光照/潮汐/气候近似模型。
+
+---
+
+## 16. v1.0 板级部署、Vitis 自动化与下一阶段
+
+### 16.1 当前板级环境与已验证事实
+
+- 开发板：正点原子领航者（V2）ZYNQ-7020，器件 `xc7z020clg400-2`。
+- SSH 入口：主机别名 `zynq`，当前 Linux 为 `Linux 5.4.0-xilinx-v2020.2`，ARMv7。
+- FPGA Manager：`/sys/class/fpga_manager/fpga0`，加载后状态为 `operating`。
+- Linux 镜像原设备树把 `0x43C00000` 声明为 Digilent AXI PWM；加载 GA3B 前必须从 `dglnt-pwm` 驱动解绑，避免旧驱动访问 GA3B 寄存器。
+- Linux 在线探针只验证 AXI4-Lite 可达性、版本和 profile，不等价于 AXI DMA 数据通路验证。
+
+板端探针实测：
+
+```text
+FPGA_STATE=operating
+GA3B register probe: base=0x43c00000 version=0x00010000
+profile=0x00000003 status=0x00000100 raw=0x00000000
+GA3B_REG_PROBE_PASS
+```
+
+### 16.2 可交付文件
+
+```text
+vivado/runs/v1_min_bd/artifacts/ga3b_v1_min.bit
+vivado/runs/v1_min_bd/artifacts/ga3b_v1_min.xsa
+vivado/runs/v1_min_bd/artifacts/ga3b_v1_min.bit.bin
+vivado/runs/v1_min_bd/artifacts/ga3b_reg_probe
+ps_app/board_agent/linux/ga3b_reg_probe.c
+ps_app/board_agent/standalone/ga3b_dma_smoke.c
+ps_app/board_agent/standalone/ga3b_uart_board_agent.c
+ps_app/host_backend/ga3b_uart_client.py
+scripts/vitis/create_v1_min_standalone.tcl
+scripts/run/build_v1_min_standalone.ps1
+scripts/run/build_v1_uart_board_agent.ps1
+vitis_workspace/v1_min_standalone/ga3b_dma_smoke/ga3b_dma_smoke.elf
+vitis_workspace/v1_min_standalone/ga3b_uart_board_agent/ga3b_uart_board_agent.elf
+```
+
+其中 `.bit.bin` 由 Bootgen `-arch zynq -process_bitstream bin` 生成，供 Linux FPGA Manager 使用；`.xsa` 供 Vitis/XSCT 创建 standalone 平台和 BSP。
+
+### 16.3 Vitis API/CLI 自动化要求
+
+Vitis 工程不要求手工点击 GUI。Vitis 2023.2 可使用 XSCT Tcl API 完成：
+
+1. 从 `ga3b_v1_min.xsa` 创建 `ps7_cortexa9_0 + standalone` 平台；
+2. 生成 BSP 和启动域；
+3. 创建 Empty Application；
+4. 导入 `ga3b_dma_smoke.c` 与 `ga3b_protocol.h`；
+5. 编译并检查 ELF 是否生成；
+6. 后续通过 XSDB/JTAG 下载 bitstream、初始化 PS、下载 ELF 并运行。
+
+自动化入口为：
+
+```powershell
+& "<Vitis>/2023.2/bin/xsct.bat" scripts/vitis/create_v1_min_standalone.tcl
+```
+
+Vitis workspace 属于可再生输出，不应作为核心源代码提交；应提交 XSA 生成脚本、XSCT Tcl、C 源码及测试结果摘要。
+
+本机 Vitis 2023.2 的 Eclipse workspace 服务在一次被外部超时中断后出现过 `Invalid Workspace`；清理生成 workspace 后，平台/API 创建可恢复。为降低 Eclipse 服务的不确定性，当前还提供 `scripts/run/build_v1_min_standalone.ps1`：它直接复用 XSCT 已生成的 BSP、`libxil.a`、`lscript.ld` 与 `Xilinx.spec` 完成确定性 ELF 编译。
+
+### 16.4 下一阶段验收顺序
+
+1. **Standalone DMA smoke test（已通过）**：JTAG/XSDB 下载并运行 Vitis 生成的 ELF，COM12 实测输出 `GA3B_DMA_SMOKE_PASS`。
+2. **DMA 结果一致性**：将板端 14-word SearchResult 与 RTL testbench/软件参考模型逐字段比较。
+3. **重复性与稳定性**：固定 seed 连续运行至少 100 次，要求无 DMA timeout、协议错误或结果漂移。
+4. **Linux 正式接入**：为当前 Linux 设备树增加 GA3B、AXI DMA、reserved-memory/UIO 或正式内核驱动节点；不要用 `/dev/mem` 实现生产 DMA。
+5. **board_agent**：实现本地 PS 常驻服务，一次加载 PL 后接受多个搜索任务，避免每个任务重新配置 FPGA。
+6. **PC 端到端**：完成 PC -> SSH/TCP -> board_agent -> DMA -> PL -> DMA -> board_agent -> PC 闭环。
+7. **性能基线**：记录单任务延时、候选评估吞吐、首次有效解时间，并与 CPU/GPU baseline 对比。
+
+当前 v1.0 状态定义为“bitstream、AXI4-Lite 板级探针及 standalone DMA 单次 smoke test 已通过；重复性、软件参考一致性与 PC 全栈验收待完成”。单次 smoke test 通过不得表述为完整算法端到端验证全部完成。
+
+### 16.5 Standalone UART 常驻 board_agent（2026-08-11）
+
+为避免每次搜索都通过 JTAG 重新下载 ELF，并为 PC 后端/Web 前端提供稳定的板端边界，新增常驻 bare-metal UART board_agent：
+
+- 板端源码：`ps_app/board_agent/standalone/ga3b_uart_board_agent.c`；
+- PC 串口传输客户端：`ps_app/host_backend/ga3b_uart_client.py`；
+- 确定性构建入口：`scripts/run/build_v1_uart_board_agent.ps1`；
+- 构建产物：`vitis_workspace/v1_min_standalone/ga3b_uart_board_agent/ga3b_uart_board_agent.elf`。
+
+第一版采用 115200-8-N-1 ASCII 行协议，板端支持：
+
+```text
+PING
+INFO
+STATUS
+RESET
+SELFTEST
+RUN <max_gen> <steps> <mutation_q16> <crossover_q16> <seed0> <seed1>
+```
+
+响应统一以 `GA3B_RSP OK` 或 `GA3B_RSP ERR` 开头。`RUN`/`SELFTEST` 经 AXI DMA 调用 PL，返回 fitness、steps 和 8 个 pure3 gene。该协议是 PC 后端接入前的传输层，不是最终 HTTP API；后续 Flask/FastAPI 只需把搜索作业映射为串口命令并解析响应。
+
+本地 ARM GCC 构建已于 2026-08-11 通过。更换连接线并重新插拔后，JTAG 已恢复，可枚举 `APU`、两个 Cortex-A9 与 `xc7z020`。随后完成一次 bitstream/新 ELF 下载：`PING`、`INFO` 和第一次 DMA `SELFTEST` 均通过，但第二次相同固定 seed 的 `SELFTEST` 出现 best chromosome 漂移；fitness 与 steps 保持一致。100 次验收因此在第 2 次停止，详见 `doc/test_results/2026-08-11_v1_uart_board_test_fail.md`。
+
+该次失败把故障边界集中到重复任务状态、BRAM 读取与结果包握手，而不是 JTAG、UART 基本通信或 DMA 首次可达性。后续修复与最终验收见 16.6；本段保留为历史故障记录。
+
+USB 串口号不是稳定接口标识，脚本和 PC 后端必须允许通过参数指定端口，不能硬编码 `COM12`。
+
+### 16.6 连续任务修复、100 次验收与设计契约（2026-08-11）
+
+重复任务漂移已定位并修复：
+
+1. population BRAM 的上层地址寄存器与 RAM 输出寄存器构成两拍读延迟，原 FSM 少等待一拍；现已为评估读取和繁殖父代读取增加显式 wait 状态。
+2. 结果包结束后 `TREADY` 尚低的第一个 `IDLE` 周期，原 RTL 仅依据 `TVALID` 提前消费下一任务 magic；现已强制所有 AXI-Stream beat 仅在 `TVALID && TREADY` 时转移。
+3. pure3 顶层 testbench 现连续发送两个完全相同任务且中间不复位，逐字比较两个 14-word SearchResult。
+
+验证结果：
+
+```text
+RTL: TB_PASS pure3_rf_repeat, 14/14 words identical
+Post-route: 100 MHz, WNS +0.296 ns, TNS 0
+Utilization: LUT 33705 (63.36%), FF 24528 (23.05%), BRAM 2 (1.43%)
+DRC: 0 errors
+Board: fixed seed 100/100 PASS, no timeout/protocol error/result drift
+```
+
+机器可读板测结果为 `doc/test_results/v1_uart_soak_latest.json`，完整记录为 `doc/test_results/2026-08-11_v1_uart_repeatability_pass.md`。
+
+已生成：
+
+```text
+vivado/runs/v1_min_bd/artifacts/sd_boot/BOOT.BIN
+```
+
+Bootgen 已确认该镜像按顺序包含 FSBL、新 bitstream 和 UART board_agent ELF。SD 断电冷启动与免 JTAG 运行已于 2026-08-11 完成板级验收，结果见 16.7。
+
+本工程从本节起以 `doc/design_contract.md` 为规范性硬件契约。契约至少覆盖 AXI `valid && ready`、同步 BRAM 显式延迟、连续任务可重入、固定 seed 确定性、Vivado OOC 缓存来源和 100 次板级验收。单次 smoke test 不再允许作为完整可重入验收。
+
+### 16.7 SD 物理冷启动与全栈基础验收（2026-08-11）
+
+开发板已在 `BOOT_CFG=OFF/OFF`、FAT32 Micro SD 根目录放置当前 `BOOT.BIN` 的条件下完成真实断电冷启动；测试过程中不依赖 JTAG 下载。冷启动后，PC 通过 COM13、115200-8-N-1 与常驻 UART board_agent 通信，并对固定 seed 连续执行 100 次 `SELFTEST`：
+
+```text
+GA3B_UART_SOAK_PASS
+iterations: 100
+elapsed_seconds: 2.760201
+average_seconds: 0.027602
+fitness: 0x00000001_00000010
+steps: 16
+result drift / DMA timeout / protocol error: 0
+```
+
+机器可读记录为 `doc/test_results/v1_sd_boot_uart_soak.json`，人工验收摘要为 `doc/test_results/2026-08-11_v1_sd_cold_boot_pass.md`。
+
+该结果确认以下全栈构建基础已经成立：
+
+```text
+SD -> FSBL -> PL bitstream + bare-metal board_agent
+PC -> UART -> PS board_agent -> AXI DMA -> pure3 PL -> AXI DMA -> PS -> UART -> PC
+```
+
+该结果本身不等同于 Web 全栈完成；随后实现并验收的 v1.1 HTTP/Web 闭环见第 17 节。运行时 Micro SD 应保留在板上用于冷启动；JTAG 仅用于调试和重新下载，不是正常运行依赖。当前 bare-metal 镜像不提供 Linux/SSH。
+
+### 17. v1.1 PC HTTP 后端与 Web 演示（2026-08-11）
+
+v1.1 已在不修改 SD 卡 bare-metal 镜像的前提下完成。PC 后端独占 USB UART，并把板端 ASCII 协议映射为同源 HTTP API：
+
+```text
+GET  /api/health
+POST /api/selftest
+POST /api/search
+POST /api/performance/probe
+```
+
+实现文件：
+
+```text
+ps_app/host_backend/ga3b_api.py
+ps_app/host_backend/ga3b_service.py
+ps_app/host_backend/ga3b_models.py
+ps_app/host_backend/ga3b_reference.py
+web/templates/index.html
+web/static/styles.css
+web/static/app.js
+scripts/run/run_v1_web_demo.ps1
+```
+
+Web 前端提供开发板在线状态、搜索参数、板端自检、最优基因、fitness、存活步数、候选吞吐和 Canvas 三体轨迹动画。动画不是 PL 内部状态的实时采样，而是使用 FPGA 返回的 8 个 Q16.16 初始条件，按 `ga3b_pure3_rf_fitness_lane.v` 的近似力、非阻塞更新顺序、碰撞和逃逸阈值在 PC 端确定性重放；第三颗太阳由质心和总动量约束推导。
+
+启动入口：
+
+```powershell
+.\scripts\run\run_v1_web_demo.ps1 -Port COM13
+```
+
+浏览器入口为 `http://127.0.0.1:8000/`。后端运行期间，不允许其它串口终端或脚本同时占用 COM13。
+
+实板 HTTP 端到端验收已通过：`/api/health` 正确识别 `version=0x00010000`、`profile=0x00000003`；`/api/search` 在 256 步任务中返回 256/256 存活轨迹，端到端约 31.58 ms。测试记录见 `doc/test_results/2026-08-11_v1_1_fullstack_pass.md`。
+
+性能探针必须遵守如下计量边界：
+
+- FPGA：完整 GA 初始化、32 个体、多代评估、选择/繁殖、AXI DMA 与 UART 往返；
+- Python scalar：对 FPGA 返回染色体执行同款定点 fitness 的串行工作负载代理；
+- NumPy batch：相同 fitness 工作负载的批量向量化代理。
+
+后两者没有执行与 RTL 完全相同的 GA 选择/繁殖，因此只能作为软件计算压力探针，不能直接宣称为算法等价 speedup。实测 `max_gen=2, steps=1024` 时，FPGA 完整端到端约 36.23 ms / 2649 eval/s，Python scalar 约 1180.07 ms / 81 eval/s，NumPy batch 约 192.87 ms / 498 eval/s。在很短的 16-step 任务中，UART 固定开销会使 FPGA 不占优势；该交叉现象必须保留并如实展示。
+
+### 18. v1.1.1 多目标轨道选择、自定义初态与 UI 重构（2026-08-11）
+
+前端提供四套具有明确判据的轨道目标：
+
+| profile | 物理含义 | 判据摘要 | 默认硬件候选数 |
+|---|---|---|---:|
+| `survival` | 长时生存 | 无碰撞、无逃逸并完成窗口 | 1 |
+| `close_pass` | 安全擦掠 | 完整存活，至少一次 0.25–1.25 距离的安全近掠 | 6 |
+| `braid` | 三星纠缠 | 存活、绕质心转角、角序换位与紧凑驻留 | 8 |
+| `recurrence` | 近周期回归 | 完整存活、末态构型接近初态且尺度漂移较小 | 8 |
+
+当前 SD 镜像中的 PL 仍只实现 `survival` fitness。为避免把软件标签伪装成新的硬件能力，其余目标采用兼容的 multi-start 流程：后端用派生 seed 执行多次真实 FPGA GA 搜索，再用 RTL 同规则轨迹重放计算近掠次数、最小间距、绕转角、换位次数、紧凑驻留率、回归误差和径向漂移，按所选目标重排。响应必须返回 `profile_match`；若最佳候选仍未满足目标判据，前端明确显示“仅为当前候选中的最优近似”，不得显示为目标已达成。
+
+新增接口：
+
+```text
+GET  /api/capabilities
+POST /api/estimate
+POST /api/custom-replay
+```
+
+HTTP 服务限制为 `max_gen<=256`、`steps<=65536`、单次 multi-start 候选数 `<=16`、预计同步请求不超过 600 秒。前端在估算完成前禁用提交；后端再次执行相同约束，客户端校验不能作为安全边界。四类长轨迹演示推荐使用 `32768 steps`；`65536` 是请求上限，但不会消除当前积分器约 2.1–2.2 万步后常见的逃逸。
+
+自定义初态接受 `x0,y0,vx0,vy0,x1,y1,vx1,vy1`，太阳 2 由等质量质心和总动量约束推导。输入位置限制为 `[-2,2]`，速度限制为 `[-1,1]`，初始任意两体 L1 距离不得低于 RTL 碰撞阈值 0.125，自定义步数不超过 131072，预计 PC 同步计算不超过 2 秒。由于当前 UART/任务协议不能将单条染色体直接注入 fitness lane，自定义模式明确标记为 `PC RTL-COMPATIBLE REPLAY`，不能标记为 FPGA 执行。
+
+UI 视觉基线参考 NASA Eyes 的沉浸式深空视图、仪器化信息层次和面向公众的交互式探索方式，但不复制其标识、图像或页面资产。新版采用全屏深空画布、半透明任务控制台、目标卡片、底部遥测、质心准星和统一青蓝/琥珀/紫色天体编码。新增 0.25×、0.5×、1×、2×、4×、8× 播放速度。
+
+已知科学限制：当前 GA 初始化表达式仍对搜索下界有偏置，PL 力模型也是为 7020 资源适配的分段近似；经典牛顿三体 8 字初态在该近似模型中不能保证长期周期。下一硬件版本应先修复全范围均匀初始化，再把至少 `close_pass`/`braid` 的累积指标下沉到 RTL fitness，之后才能把四套目标称为四套原生 FPGA fitness。
+
+#### 18.1 事件高亮窗口与网页内帮助
+
+完整长轨迹中的后期背离会扩大画布尺度，使早期近掠或纠缠几乎不可见。后端现从最多 720 个完整重放采样帧中选择最多 240 个连续帧作为展示窗口：`close_pass` 优先覆盖安全近心点，`braid` 优先覆盖绕转和紧凑段，`recurrence` 优先覆盖局部回归段，`survival` 优先覆盖有界且具有运动量的区段。窗口不重排帧、不删除中间物理时间，也不修改完整 fitness、存活步数或目标判据。前端必须显示 `HIGHLIGHT start-end / FULL start-end`，且允许点击标签切换完整轨迹与高亮窗口，防止把高亮片段误认为完整稳定窗口。
+
+顶部导航现具备真实行为：轨道实验滚动到主视图，性能遥测滚动到性能探针，系统信息读取 `/api/health` 与 `/api/capabilities` 并显示板卡/服务限制，使用指南打开网页内 README。网页 README 必须说明后端启动、目标含义、承载估算、高亮窗口、目标吻合、自定义初态和静态页面无法直接访问 FPGA 的排障方式。
+
+#### 18.2 v1.1.2 结果库、模范解与有限窗口分类
+
+后端将每次 FPGA 搜索和 PC 自定义重放自动保存到本地 SQLite：`doc/test_results/ga3b_results.sqlite3`。新增接口为 `GET /api/results`、`GET /api/results/<id>`、`GET /api/presets` 和 `POST /api/presets/<id>/run`。数据库属于运行数据并由 Git 忽略；四套模范解定义保存在受版本控制的 `ps_app/host_backend/presets/trajectory_templates.json`。
+
+模范解均来自 2026-08-11 的真实板端 32768-step 扫描，固定输入 seed、演化参数和窗口。点击“上板复现”会再次发送 `RUN`，并非播放静态伪造结果。分类器按末态回归误差/径向漂移、累计绕转/角序交换、安全近掠次数和实际生存步数依次判定 `near_recurrence`、`three_body_braid`、`safe_close_pass`、`long_survival`。这些是可审计的有限窗口现象标签；特别是当前“近周期回归”只是四类候选中最接近回归的近似，不得宣称为严格周期解。
+
+前端不再向普通用户显示十六进制。位置和速度显示为 Q16.16 解码后的有符号十进制物理量，并附带有符号 Q16 整数；fitness 显示为无符号 64 位十进制；mutation/crossover 输入为十进制 Q16 概率，概率等于输入值除以 65536；seed 显示为有符号十进制，在服务端按相同 32 位二进制补码送入 FPGA。
+
+实板参数扫描结论：12 组 32768-step 搜索的最佳染色体生存约 20886–21902 步；另 16 组 65536-step 搜索仍在约 21099–22126 步终止。提高请求窗口只允许观察更晚的失败，不会自动修复当前显式积分和分段力近似的能量漂移。原始记录见 `doc/test_results/v1_template_scan_32768.json` 与 `doc/test_results/v1_template_scan_65536.json`。
+
+性能探针采用与长轨迹搜索解耦的标准交互负载：前端固定提交 `max_gen=8, steps=8192, hardware_runs=2` 和固定 seed；后端硬限制为最多 8 代、8192 步和 3 次板端采样。该规模应在真实 7020 板上形成可见的 FPGA 吞吐优势，同时保持典型墙钟时间在约 10 秒以内；不得直接继承 32768/65536 步页面参数。探针按钮必须提供运行中、成功和失败状态，并展示每个探针的 eval/s、实际耗时和 FPGA 相对软件吞吐倍数。初始条件和轨迹指标必须实现为可切换页签，不能只使用无事件的视觉按钮。
