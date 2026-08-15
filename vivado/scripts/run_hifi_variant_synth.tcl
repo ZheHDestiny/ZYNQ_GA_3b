@@ -1,9 +1,9 @@
-# Non-project synthesis for GA3B v1.0 minimal custom RTL top.
-# This avoids Vivado project-run child process issues and validates the custom
-# AXI-Lite/AXI-Stream shell plus pure3 accelerator hierarchy.
+# Non-project synthesis comparison for the two GA3B high-fidelity integrators.
 set script_dir [file dirname [file normalize [info script]]]
 set repo_root [file normalize [file join $script_dir .. ..]]
-set run_dir [file join $repo_root vivado runs v1_min_accel_synth]
+set mode [expr {[llength $argv] > 0 ? [lindex $argv 0] : 0}]
+set variant [expr {$mode == 0 ? "symplectic" : "leapfrog_cached"}]
+set run_dir [file join $repo_root vivado runs hifi_${variant}_synth]
 file mkdir $run_dir
 cd $run_dir
 
@@ -16,9 +16,11 @@ read_verilog [file join $repo_root rtl pure3_core ga3b_pure3_rf_fitness_lane.v]
 read_verilog [file join $repo_root rtl pure3_core ga3b_pure3_rf_ga_core.v]
 read_verilog [file join $repo_root rtl pure3_core ga3b_pure3_rf_accel_top.v]
 read_verilog [file join $repo_root rtl top ga3b_v1_min_accel_top.v]
-synth_design -top ga3b_v1_min_accel_top -part $part
+synth_design -top ga3b_v1_min_accel_top -part $part \
+    -generic HIFI_ENABLE=1 -generic INTEGRATOR_MODE=$mode
 create_clock -period 10.000 -name aclk [get_ports aclk]
+report_utilization -hierarchical -file post_synth_util_hier.rpt
 report_utilization -file post_synth_util.rpt
 report_timing_summary -file post_synth_timing.rpt
 write_checkpoint -force post_synth.dcp
-puts "GA3B_V1_MIN_ACCEL_SYNTH_DONE: $run_dir"
+puts "GA3B_HIFI_SYNTH_DONE variant=$variant mode=$mode run_dir=$run_dir"

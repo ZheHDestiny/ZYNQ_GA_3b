@@ -36,12 +36,14 @@ The Web UI intentionally does not expose hexadecimal values:
 
 - `x0/y0/x1/y1` are normalized center-of-mass-frame positions.
 - `vx0/vy0/vx1/vy1` are normalized velocities.
-- Physical values are decoded Q16.16 numbers. The accompanying signed Q16
+- Browser genes are decoded Q16.16 values. Profile 5 promotes them to a Q32.32
+  state before smooth-LUT cached-Leapfrog integration. The accompanying signed
   integer is `physical_value * 65536` rounded to the nearest integer.
-- Mutation/crossover inputs are decimal unsigned Q16 probabilities in
-  `0..65535`; probability is `value / 65536`.
-- Seeds are shown as signed decimal 32-bit values. The service masks them to
-  the same two's-complement 32-bit pattern used by the FPGA RNG.
+- Browser mutation/crossover inputs are percentages in `0.00..100.00`; the
+  backend converts them to Q0.16 (`round(percent*65536/100)`, with 100%
+  saturated to 65535). Direct API clients may still submit `*_q16` fields.
+- The two unsigned decimal reproducibility seed words are mixed as
+  `seed0 XOR swap16(seed1)` to initialize the FPGA xorshift32 generator.
 - Fitness is displayed as an unsigned decimal 64-bit integer.
 
 Search and custom-replay responses are automatically stored in
@@ -63,9 +65,10 @@ Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/search `
   -Body '{"max_gen":2,"steps":256,"mutation_q16":4096,"crossover_q16":49152,"seed0":305419896,"seed1":-2023406815}'
 ```
 
-The trajectory is a PC replay of the returned FPGA chromosome using the same
-approximate Q16.16 integration rules. It is not a live stream of PL internal
-states. The current Zynq-7020 profile is the Pure3 resource-fit fallback.
+The trajectory is a PC replay of the returned FPGA chromosome using Profile-5
+Q32.32 smooth-LUT cached-Leapfrog rules. It is not a live stream of PL internal
+states. Responses include `replay_consistency.steps_match`; preset runs also
+check the exact chromosome against versioned Profile-5 templates.
 
 The four browser objective profiles (`survival`, `close_pass`, `braid`, and
 `recurrence`) use multi-start FPGA searches followed by physically interpretable
@@ -74,9 +77,9 @@ fitness. A response includes `profile_match`; the UI warns when the best
 available candidate does not actually satisfy the selected criterion.
 
 Custom initial states are validated on both client and server and replayed by
-the PC RTL-compatible model. The current board protocol cannot inject one
-chromosome directly into the PL lane, so the UI labels this mode `PC
-RTL-COMPATIBLE REPLAY` instead of presenting it as FPGA execution.
+the PC Profile-5 model. The current board protocol cannot inject one chromosome
+directly into the PL lane, so the UI labels this mode `PC PROFILE-5 LEAPFROG
+REPLAY` instead of presenting it as FPGA execution.
 
 ## Performance probe boundary
 

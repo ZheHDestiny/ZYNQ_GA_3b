@@ -5,7 +5,9 @@
 module ga3b_pure3_rf_accel_top #(
     parameter integer GENE_COUNT    = 8,
     parameter integer GENE_WIDTH    = 32,
-    parameter integer FITNESS_WIDTH = 64
+    parameter integer FITNESS_WIDTH = 64,
+    parameter integer HIFI_ENABLE   = 1,
+    parameter integer INTEGRATOR_MODE = 0
 )(
     input  wire                         aclk,
     input  wire                         aresetn,
@@ -62,7 +64,9 @@ module ga3b_pure3_rf_accel_top #(
         .POP_SIZE(32),
         .GENE_COUNT(GENE_COUNT),
         .GENE_WIDTH(GENE_WIDTH),
-        .FITNESS_WIDTH(FITNESS_WIDTH)
+        .FITNESS_WIDTH(FITNESS_WIDTH),
+        .HIFI_ENABLE(HIFI_ENABLE),
+        .INTEGRATOR_MODE(INTEGRATOR_MODE)
     ) u_core (
         .clk(aclk),
         .rst_n(aresetn),

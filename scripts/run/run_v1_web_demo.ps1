@@ -2,6 +2,7 @@ param(
     [string]$Port = "COM13",
     [int]$HttpPort = 8000,
     [string]$BindHost = "127.0.0.1",
+    [int]$UartTimeout = 600,
     [switch]$NoBrowser
 )
 
@@ -17,7 +18,8 @@ Write-Host "Close serial terminals before continuing. Press Ctrl+C to stop."
 
 Push-Location $backend
 try {
-    $arguments = @('-B', 'ga3b_api.py', '--port', $Port, '--host', $BindHost, '--http-port', $HttpPort)
+    $arguments = @('-B', 'ga3b_api.py', '--port', $Port, '--host', $BindHost,
+                   '--http-port', $HttpPort, '--uart-timeout', $UartTimeout)
     if (-not $NoBrowser) { $arguments += '--open-browser' }
     & python @arguments
     if ($LASTEXITCODE -ne 0) { throw "GA3B backend exited with code $LASTEXITCODE" }

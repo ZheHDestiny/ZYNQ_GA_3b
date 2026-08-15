@@ -14,9 +14,13 @@ module ga3b_pure3_rf_pop_ram #(parameter integer ADDR_WIDTH=8, parameter integer
     output reg signed [DATA_WIDTH-1:0] dout_b
 );
     (* ram_style="block" *) reg signed [DATA_WIDTH-1:0] mem [0:(1<<ADDR_WIDTH)-1];
+    // Keep each true-dual-port write/read in its own clocked process.  Vivado
+    // otherwise dissolves both population memories into ~22k LUT/FF cells.
     always @(posedge clk) begin
         if (we_a) mem[addr_a] <= din_a;
         dout_a <= mem[addr_a];
+    end
+    always @(posedge clk) begin
         if (we_b) mem[addr_b] <= din_b;
         dout_b <= mem[addr_b];
     end
@@ -26,7 +30,9 @@ module ga3b_pure3_rf_ga_core #(
     parameter integer POP_SIZE=32,
     parameter integer GENE_COUNT=8,
     parameter integer GENE_WIDTH=32,
-    parameter integer FITNESS_WIDTH=64
+    parameter integer FITNESS_WIDTH=64,
+    parameter integer HIFI_ENABLE=1,
+    parameter integer INTEGRATOR_MODE=0
 )(
     input wire clk,
     input wire rst_n,
@@ -62,6 +68,10 @@ module ga3b_pure3_rf_ga_core #(
     // between issuing an address and consuming dout; otherwise a new task can
     // observe the previous task's final RAM address/data.
     localparam [4:0] S_LOAD_WAIT=5'd19, S_REPRO_WAIT=5'd20;
+    // Uniform initialization uses the full 32-bit PRNG word.  The mapping is
+    // floor((max-min)*random/2^32), implemented as a two-cycle multiply/write
+    // sequence so initialization is not biased toward either bound.
+    localparam [4:0] S_INIT_MUL=5'd21, S_INIT_WR=5'd22;
 
     reg [4:0] state;
     reg active_bank;
@@ -72,6 +82,8 @@ module ga3b_pure3_rf_ga_core #(
     reg [4:0] sel0, sel1, sel2, sel_best;
     reg [FITNESS_WIDTH-1:0] fit0, fit1, fit2, fit_best;
     reg lane_start, rng_seed_we, rng_next;
+    reg [31:0] init_range, init_rand;
+    reg [63:0] init_product;
 
     reg a_we_a, a_we_b, b_we_a, b_we_b;
     reg [7:0] a_addr_a, a_addr_b, b_addr_a, b_addr_b;
@@ -93,9 +105,24 @@ module ga3b_pure3_rf_ga_core #(
     wire [31:0] rng_random;
 
     ga3b_rng_xorshift32 u_rng(.clk(clk),.rst_n(rst_n),.seed_we(rng_seed_we),.seed(seed0 ^ {seed1[15:0], seed1[31:16]}),.next(rng_next),.random(rng_random));
-    ga3b_pure3_rf_fitness_lane #(.GENE_COUNT(GENE_COUNT),.GENE_WIDTH(GENE_WIDTH),.FITNESS_WIDTH(FITNESS_WIDTH)) u_lane(
-        .clk(clk),.rst_n(rst_n),.start(lane_start),.steps_limit(steps_limit),.chromosome_flat(lane_chromosome_flat),
-        .busy(),.done(lane_done),.fitness(lane_fitness),.survived_steps(lane_steps),.valid_stable(),.error());
+    generate
+        if (HIFI_ENABLE != 0) begin : g_hifi_lane
+            ga3b_pure3_hifi_fitness_lane #(
+                .GENE_COUNT(GENE_COUNT),.GENE_WIDTH(GENE_WIDTH),
+                .FITNESS_WIDTH(FITNESS_WIDTH),.INTEGRATOR_MODE(INTEGRATOR_MODE)
+            ) u_lane(
+                .clk(clk),.rst_n(rst_n),.start(lane_start),.steps_limit(steps_limit),
+                .chromosome_flat(lane_chromosome_flat),.busy(),.done(lane_done),
+                .fitness(lane_fitness),.survived_steps(lane_steps),.valid_stable(),.error());
+        end else begin : g_legacy_lane
+            ga3b_pure3_rf_fitness_lane #(
+                .GENE_COUNT(GENE_COUNT),.GENE_WIDTH(GENE_WIDTH),.FITNESS_WIDTH(FITNESS_WIDTH)
+            ) u_lane(
+                .clk(clk),.rst_n(rst_n),.start(lane_start),.steps_limit(steps_limit),
+                .chromosome_flat(lane_chromosome_flat),.busy(),.done(lane_done),
+                .fitness(lane_fitness),.survived_steps(lane_steps),.valid_stable(),.error());
+        end
+    endgenerate
 
     function signed [31:0] clamp_gene;
         input signed [31:0] v, lo, hi;
@@ -127,6 +154,7 @@ module ga3b_pure3_rf_ga_core #(
             a_addr_a <= 0; a_addr_b <= 0; b_addr_a <= 0; b_addr_b <= 0;
             a_din_a <= 0; a_din_b <= 0; b_din_a <= 0; b_din_b <= 0;
             child_gene <= 0; pa <= 0; pb <= 0; sel0 <= 0; sel1 <= 0; sel2 <= 0; sel_best <= 0; fit0 <= 0; fit1 <= 0; fit2 <= 0; fit_best <= 0;
+            init_range <= 0; init_rand <= 0; init_product <= 0;
             for (k=0; k<GENE_COUNT; k=k+1) begin
                 bmin[k] <= -32'sd65536; bmax[k] <= 32'sd65536; bscale[k] <= 32'sd4096;
             end
@@ -152,17 +180,37 @@ module ga3b_pure3_rf_ga_core #(
                 end
                 S_SEED: begin rng_next <= 1'b1; state <= error ? S_DONE : S_INIT; end
                 S_INIT: begin
-                    a_addr_a <= {indiv_idx, gene_idx};
-                    if (indiv_idx == 5'd0)
+                    if (indiv_idx == 5'd0) begin
+                        a_addr_a <= {indiv_idx, gene_idx};
                         a_din_a <= clamp_gene((bmin[gene_idx]>>>1)+(bmax[gene_idx]>>>1), bmin[gene_idx], bmax[gene_idx]);
-                    else
-                        a_din_a <= clamp_gene(bmin[gene_idx]+{{16{rng_random[15]}},rng_random[15:0]}, bmin[gene_idx], bmax[gene_idx]);
-                    a_we_a <= 1'b1; rng_next <= 1'b1;
+                        a_we_a <= 1'b1;
+                        if (gene_idx == 3'd7) begin
+                            gene_idx <= 0; indiv_idx <= indiv_idx + 1'b1;
+                        end else gene_idx <= gene_idx + 1'b1;
+                    end else begin
+                        // Unsigned subtraction intentionally uses modulo-2^32
+                        // arithmetic; for valid signed bounds it equals max-min.
+                        init_range <= $unsigned(bmax[gene_idx]) - $unsigned(bmin[gene_idx]);
+                        init_rand <= rng_random;
+                        rng_next <= 1'b1;
+                        state <= S_INIT_MUL;
+                    end
+                end
+                S_INIT_MUL: begin
+                    init_product <= init_range * init_rand;
+                    state <= S_INIT_WR;
+                end
+                S_INIT_WR: begin
+                    a_addr_a <= {indiv_idx, gene_idx};
+                    // The upper product word is floor(range*random/2^32).
+                    // It is always in [0,range), hence the sum is in bounds.
+                    a_din_a <= bmin[gene_idx] + $signed({1'b0,init_product[63:32]});
+                    a_we_a <= 1'b1;
                     if (gene_idx == 3'd7) begin
                         gene_idx <= 0;
                         if (indiv_idx == POP_LAST) begin indiv_idx <= 0; state <= S_LOAD_REQ; end
-                        else indiv_idx <= indiv_idx + 1'b1;
-                    end else gene_idx <= gene_idx + 1'b1;
+                        else begin indiv_idx <= indiv_idx + 1'b1; state <= S_INIT; end
+                    end else begin gene_idx <= gene_idx + 1'b1; state <= S_INIT; end
                 end
                 S_LOAD_REQ: begin
                     if (!active_bank) a_addr_a <= {indiv_idx, gene_idx}; else b_addr_a <= {indiv_idx, gene_idx};

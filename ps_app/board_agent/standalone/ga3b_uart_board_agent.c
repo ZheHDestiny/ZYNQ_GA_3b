@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Persistent UART-to-AXI-DMA board agent for the GA3B v1-min pure3 profile.
+// Persistent UART-to-AXI-DMA board agent for the GA3B high-fidelity profiles.
 
 #include <stdint.h>
 #include <stddef.h>
@@ -57,6 +57,11 @@ static const int32_t default_scale[GA3B_PURE3_GENE_COUNT] = {
 
 static uint32_t reg_read(uint32_t off) {
     return Xil_In32((UINTPTR)(GA3B_ACCEL_BASEADDR + off));
+}
+
+static int supported_hifi_profile(uint32_t profile) {
+    return profile == GA3B_PROFILE_PURE3_HIFI_SYMPLECTIC ||
+           profile == GA3B_PROFILE_PURE3_HIFI_LEAPFROG;
 }
 
 static void reg_write(uint32_t off, uint32_t value) {
@@ -166,10 +171,16 @@ int main(void) {
     char line[GA3B_LINE_BYTES];
     char *argv[GA3B_ARG_MAX];
     int dma_status = dma_init();
+    uint32_t profile = reg_read(GA3B_REG_PROFILE);
+
+    /* Refuse legacy profile 3 so an old bitstream cannot be mistaken for the
+       new high-fidelity full-stack image.  This agent supports profiles 4/5;
+       the BOOT.BIN produced by this build is specifically profile 5. */
+    if (dma_status == 0 && !supported_hifi_profile(profile)) dma_status = -20;
 
     xil_printf("\r\nGA3B_AGENT_READY protocol=1 version=0x%08lx profile=0x%08lx dma=%d\r\n",
                (unsigned long)reg_read(GA3B_REG_VERSION),
-               (unsigned long)reg_read(GA3B_REG_PROFILE), dma_status);
+               (unsigned long)profile, dma_status);
     if (dma_status != 0) {
         xil_printf("GA3B_RSP ERR DMA_INIT code=%d\r\n", dma_status);
         for (;;) { }
@@ -199,7 +210,11 @@ int main(void) {
             xil_printf("GA3B_RSP OK RESET\r\n");
         } else if (strcmp(argv[0], "SELFTEST") == 0) {
             int rc = run_search(2u, 16u, 0x1000u, 0xC000u, 0x12345678u, 0x87654321u);
-            if (rc == 0 && rx_result[3] == 0x00000010u && rx_result[4] == 0x00000001u && rx_result[5] == 16u) {
+            if (rc == 0 && rx_result[0] == GA3B_MAGIC_RESULT &&
+                (rx_result[1] & 0x00030000u) == 0u &&
+                rx_result[2] < GA3B_PURE3_POP_SIZE &&
+                rx_result[3] == 0x00000010u && rx_result[4] == 0x00000001u &&
+                rx_result[5] == 16u) {
                 print_result();
                 xil_printf("GA3B_RSP OK SELFTEST_PASS\r\n");
             } else {

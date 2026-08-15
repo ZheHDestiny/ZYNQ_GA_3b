@@ -1,0 +1,46 @@
+{
+  "genes_q16_signed": [
+    -244,
+    40654,
+    3309,
+    -5090,
+    20358,
+    65850,
+    -397,
+    4024
+  ],
+  "genes": [
+    -0.00372314453125,
+    0.620330810546875,
+    0.0504913330078125,
+    -0.077667236328125,
+    0.310638427734375,
+    1.004791259765625,
+    -0.0060577392578125,
+    0.0614013671875
+  ],
+  "requested_steps": 1048576,
+  "survived_steps": 1048576,
+  "failure": null,
+  "pc_elapsed_seconds": 64.66302519999954,
+  "invariant_drift": {
+    "relative_energy": 1.2671630734732558e-07,
+    "absolute_angular_momentum": 4.1645006831902975e-08,
+    "relative_angular_momentum": 5.012999272756123e-07
+  },
+  "trajectory_metrics": {
+    "survived_ratio": 1.0,
+    "min_pair_distance": 0.31412936671816366,
+    "mean_pair_distance": 2.1292419224033816,
+    "max_rms_radius": 1.5578332346833224,
+    "mean_rms_radius": 1.323993505910469,
+    "compact_fraction": 1.0,
+    "close_pass_count": 68,
+    "winding_radians": 411.6120385119815,
+    "exchange_count": 215,
+    "path_length": 550.6585197685715,
+    "recurrence_error": 0.528559809385382,
+    "radial_drift": 0.21575707138429934,
+    "collision_margin": 0.18912936671816366
+  }
+}

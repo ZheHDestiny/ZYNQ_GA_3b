@@ -1,0 +1,60 @@
+{
+  "profile": 5,
+  "records": [
+    {
+      "name": "long_seed",
+      "request": {
+        "max_gen": 64,
+        "steps": 1048576,
+        "mutation_q16": 20480,
+        "crossover_q16": 57344,
+        "seed0": 2995967490,
+        "seed1": 1001641397
+      },
+      "elapsed_seconds": 124.51601649999793,
+      "result": {
+        "magic": 1381190740,
+        "status": 64,
+        "best_idx": 0,
+        "fitness": 4296015872,
+        "steps": 1048576,
+        "genes": [
+          -0.00372314453125,
+          0.620330810546875,
+          0.0504913330078125,
+          -0.077667236328125,
+          0.310638427734375,
+          1.004791259765625,
+          -0.0060577392578125,
+          0.0614013671875
+        ],
+        "fitness_hex": "0x0000000100100000",
+        "fitness_decimal": 4296015872,
+        "genes_raw": [
+          "0xFFFFFF0C",
+          "0x00009ECE",
+          "0x00000CED",
+          "0xFFFFEC1E",
+          "0x00004F86",
+          "0x0001013A",
+          "0xFFFFFE73",
+          "0x00000FB8"
+        ],
+        "genes_q16_signed": [
+          -244,
+          40654,
+          3309,
+          -5090,
+          20358,
+          65850,
+          -397,
+          4024
+        ],
+        "stable": true
+      },
+      "pc_survived_steps": 1048576,
+      "pc_failure": null,
+      "steps_match": true
+    }
+  ]
+}

@@ -23,14 +23,14 @@
 
       <section id="searchPanel">
         <label class="field"><span>演化代数 <b>MAX_GEN</b></span><input id="maxGen" type="number" min="1" max="256" value="8"></label>
-        <label class="field"><span>积分窗口 <b>STEPS</b></span><input id="steps" type="number" min="1" max="65536" value="4096"></label>
+        <label class="field"><span>积分窗口 <b>MAX 131072</b></span><input id="steps" type="number" min="1" max="131072" value="4096"></label>
         <div class="field-pair">
-          <label class="field"><span>变异率 <b>Q16 十进制</b></span><input id="mutation" value="16384"></label>
-          <label class="field"><span>交叉率 <b>Q16 十进制</b></span><input id="crossover" value="53248"></label>
+          <label class="field"><span>变异率 <b>%</b></span><input id="mutation" type="number" min="0" max="100" step="0.01" value="31.25"></label>
+          <label class="field"><span>交叉率 <b>%</b></span><input id="crossover" type="number" min="0" max="100" step="0.01" value="87.50"></label>
         </div>
         <div class="field-pair">
-          <label class="field"><span>Seed A（有符号十进制）</span><input id="seed0" value="305419896"></label>
-          <label class="field"><span>Seed B（有符号十进制）</span><input id="seed1" value="-2023406815"></label>
+          <label class="field"><span>复现实验种子（主字）<b>RNG SEED 0</b></span><input id="seed0" type="number" min="0" max="4294967295" step="1" value="305419896"></label>
+          <label class="field"><span>复现实验种子（混合字）<b>RNG SEED 1</b></span><input id="seed1" type="number" min="0" max="4294967295" step="1" value="2271560481"></label>
         </div>
       </section>
 
@@ -93,7 +93,7 @@
     <section class="perf-deck glass">
       <div class="section-head"><div><span class="kicker">COMPUTE TELEMETRY</span><h2>性能对比探针</h2></div><button id="runBenchmark" class="mini">RUN PROBE</button></div>
       <div id="perfBars" class="perf-bars"><p>比较 FPGA 完整链路、Python 串行与 NumPy 批处理。</p></div>
-      <div id="probeStatus" class="probe-status">标准化探针：8 代、8192 积分步、2 次板端采样、固定 seed。实板典型耗时约 6 秒，负载独立于上方搜索参数。</div>
+      <div id="probeStatus" class="probe-status">标准化探针：8 代、8192 积分步、2 次板端采样、固定 seed。比较 Profile-5 FPGA、定点 Python 与 float64 NumPy 代理。</div>
       <p id="perfNote" class="fineprint">探针边界不同，不以代理负载冒充算法等价加速比。</p>
     </section>
   </main>
@@ -109,9 +109,9 @@
       <section><b>03</b><div><h3>等待承载估算</h3><p>参数改变后，提交按钮会暂时锁定。只有预计时间不超过服务预算时才允许上传。较长窗口更容易看到完整事件，但需要等待更多时间。</p></div></section>
       <section><b>04</b><div><h3>理解高亮窗口</h3><p>动画默认展示完整计算结果中最富有近掠或纠缠特征的一段连续物理轨迹。右下角会显示原始 step 范围；存活数、fitness 和目标判据始终来自完整轨迹，不会因展示裁剪而改变。</p></div></section>
       <section><b>05</b><div><h3>检查结果是否吻合</h3><p>如果状态显示“仅为当前候选中的最优近似”，表示候选没有达到所选物理判据。不要仅凭动画把它解释为周期解或稳定纠缠。</p></div></section>
-      <section><b>06</b><div><h3>自定义初态</h3><p>可输入太阳 α、β 的位置和速度，太阳 γ 自动满足质心与总动量约束。该模式是 PC 上的 RTL 同规则重放，不是 FPGA 搜索。默认经典 8 字初态可用于观察一段明显纠缠。</p></div></section>
+      <section><b>06</b><div><h3>自定义初态</h3><p>可输入太阳 α、β 的位置和速度，太阳 γ 自动满足质心与总动量约束。该模式使用 PC 上的 Profile-5 Q32.32 平滑力缓存 Leapfrog 重放，不是 FPGA 搜索。默认经典 8 字初态可用于观察一段明显纠缠。</p></div></section>
       <section><b>07</b><div><h3>播放和遥测</h3><p>使用时间轴、暂停和 0.25×–8× 速度检查近心点过程；点击顶部“性能遥测”跳转到性能探针，“系统信息”查看当前板卡、profile 和服务限制。</p></div></section>
-      <section><b>08</b><div><h3>十进制参数语义</h3><p><code>x/y</code> 是质心坐标系中的归一化位置，<code>vx/vy</code> 是归一化速度。页面显示的是 Q16.16 解码值；旁边的 Q16 整数等于物理值乘 65536。变异率和交叉率输入 0–65535，概率等于输入值除以 65536。Seed 使用有符号十进制显示，传入 FPGA 时按同一 32 位二进制补码解释。</p></div></section>
+      <section><b>08</b><div><h3>十进制参数语义</h3><p><code>x/y</code> 是质心坐标系中的归一化位置，<code>vx/vy</code> 是归一化速度。GA 基因接口仍为 Q16.16，进入积分 lane 后提升为 Q32.32 状态；旁边的 Q16 整数等于物理值乘 65536。变异率和交叉率由用户按 0.00%–100.00% 输入，后端自动译码为 RTL 的 Q0.16，其中 100% 饱和为 65535。两个复现实验种子是 xorshift32 的主字与混合字；相同的种子组合、超参数和硬件 profile 可复现实验。</p></div></section>
       <section><b>09</b><div><h3>模范解与本地保存</h3><p>“选择模范解”会用固定 seed 再次启动真实 FPGA 搜索。每次搜索和自定义重放均自动保存到本地 SQLite。长时生存与近周期回归都是有限窗口标签，不代表数学上的无限稳定或严格周期证明。</p></div></section>
       <aside><strong>只有静态前端怎么办？</strong><p>若页面能打开但所有 API 都失败，说明 Flask 后端没有运行。请在项目根目录执行 <code>.\scripts\run\run_v1_web_demo.ps1 -Port COM13</code>。单独双击 HTML 文件不能访问 FPGA。</p></aside>
     </div>
@@ -119,7 +119,7 @@
   <dialog id="presetDialog" class="info-dialog">
     <div class="dialog-head"><div><span class="kicker">VERIFIED BOARD TEMPLATES</span><h2>模范解</h2></div><button data-close="presetDialog">×</button></div>
     <div class="dialog-content">
-      <p class="fineprint">每个模范解都会把实测固定 seed 重新提交给 FPGA，而不是播放伪造动画。分类只描述有限积分窗口。</p>
+      <p class="fineprint">每个模范解都来自 profile-5 实板扫描，并把精确 seed 重新提交给 FPGA；页面校验返回基因与存活步数。分类只描述有限积分窗口。</p>
       <div id="presetGrid" class="preset-grid"><p>正在读取模范解……</p></div>
     </div>
   </dialog>

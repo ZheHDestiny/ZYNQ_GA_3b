@@ -10,10 +10,14 @@ $customDir = Join-Path $runs $customName
 $customDcp = Join-Path $customDir "ga3b_system_ga3b_accel_0_0.dcp"
 $customSources = @(
   (Join-Path $repo "rtl\ga_core\ga3b_rng_xorshift32.v"),
+  (Join-Path $repo "rtl\pure3_core\ga3b_pure3_inv_r3_lut.v"),
+  (Join-Path $repo "rtl\pure3_core\ga3b_pure3_hifi_force_pair.v"),
+  (Join-Path $repo "rtl\pure3_core\ga3b_pure3_hifi_fitness_lane.v"),
   (Join-Path $repo "rtl\pure3_core\ga3b_pure3_rf_fitness_lane.v"),
   (Join-Path $repo "rtl\pure3_core\ga3b_pure3_rf_ga_core.v"),
   (Join-Path $repo "rtl\pure3_core\ga3b_pure3_rf_accel_top.v"),
-  (Join-Path $repo "rtl\top\ga3b_v1_min_accel_top.v")
+  (Join-Path $repo "rtl\top\ga3b_v1_min_accel_top.v"),
+  (Join-Path $repo "vivado\runs\v1_min_bd\ga3b_v1_min_bd.gen\sources_1\bd\ga3b_system\ip\ga3b_system_ga3b_accel_0_0\synth\ga3b_system_ga3b_accel_0_0.v")
 )
 $latestSource = ($customSources | Get-Item | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
 if (!(Test-Path -LiteralPath $customDcp) -or (Get-Item -LiteralPath $customDcp).LastWriteTime -lt $latestSource) {

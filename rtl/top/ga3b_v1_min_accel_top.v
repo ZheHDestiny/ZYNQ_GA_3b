@@ -13,7 +13,9 @@
 module ga3b_v1_min_accel_top #(
     parameter integer GENE_COUNT    = 8,
     parameter integer GENE_WIDTH    = 32,
-    parameter integer FITNESS_WIDTH = 64
+    parameter integer FITNESS_WIDTH = 64,
+    parameter integer HIFI_ENABLE   = 1,
+    parameter integer INTEGRATOR_MODE = 0
 )(
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 ACLK CLK" *)
     (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF S_AXIS:M_AXIS, ASSOCIATED_RESET aresetn, FREQ_HZ 100000000" *)
@@ -93,13 +95,14 @@ module ga3b_v1_min_accel_top #(
     output wire                         irq_out
 );
     localparam [31:0] REG_VERSION = 32'h0001_0000;
-    localparam [31:0] REG_PROFILE = 32'h0000_0003; // 3 = pure3 resource-fit v1 minimal profile.
+    localparam [31:0] REG_PROFILE = (HIFI_ENABLE == 0) ? 32'h0000_0003 :
+                                        ((INTEGRATOR_MODE == 0) ? 32'h0000_0004 : 32'h0000_0005);
 
     // Register map, word offsets:
     // 0x00 CTRL    bit0 accel_enable(default 1), bit1 irq_enable, bit2 clear_done W1P, bit3 soft_reset W1P
     // 0x04 STATUS  bit0 done_latched, bit1 proto_error_latched, bit2 accel_irq_raw, bit3 irq_out, bit8 enabled
     // 0x08 VERSION 0x00010000
-    // 0x0c PROFILE 0x00000003 pure3_rf
+    // 0x0c PROFILE 3=legacy pure3_rf, 4=HiFi symplectic, 5=HiFi cached Leapfrog
     // 0x10 RAW     {30'd0, proto_error_raw, accel_irq_raw}
     reg accel_enable;
     reg irq_enable;
@@ -116,7 +119,9 @@ module ga3b_v1_min_accel_top #(
     ga3b_pure3_rf_accel_top #(
         .GENE_COUNT(GENE_COUNT),
         .GENE_WIDTH(GENE_WIDTH),
-        .FITNESS_WIDTH(FITNESS_WIDTH)
+        .FITNESS_WIDTH(FITNESS_WIDTH),
+        .HIFI_ENABLE(HIFI_ENABLE),
+        .INTEGRATOR_MODE(INTEGRATOR_MODE)
     ) u_accel (
         .aclk(aclk),
         .aresetn(accel_aresetn),

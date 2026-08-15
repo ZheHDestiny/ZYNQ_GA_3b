@@ -1684,3 +1684,79 @@ UI 视觉基线参考 NASA Eyes 的沉浸式深空视图、仪器化信息层次
 实板参数扫描结论：12 组 32768-step 搜索的最佳染色体生存约 20886–21902 步；另 16 组 65536-step 搜索仍在约 21099–22126 步终止。提高请求窗口只允许观察更晚的失败，不会自动修复当前显式积分和分段力近似的能量漂移。原始记录见 `doc/test_results/v1_template_scan_32768.json` 与 `doc/test_results/v1_template_scan_65536.json`。
 
 性能探针采用与长轨迹搜索解耦的标准交互负载：前端固定提交 `max_gen=8, steps=8192, hardware_runs=2` 和固定 seed；后端硬限制为最多 8 代、8192 步和 3 次板端采样。该规模应在真实 7020 板上形成可见的 FPGA 吞吐优势，同时保持典型墙钟时间在约 10 秒以内；不得直接继承 32768/65536 步页面参数。探针按钮必须提供运行中、成功和失败状态，并展示每个探针的 eval/s、实际耗时和 FPGA 相对软件吞吐倍数。初始条件和轨迹指标必须实现为可切换页签，不能只使用无事件的视觉按钮。
+
+### 18.3 缓存加速度 Leapfrog 与均匀 GA 初始化的 P1 集成（2026-08-15）
+
+P1 硬件交付物已切换为高精度平滑力、辛积分 LUT 和缓存加速度 Leapfrog，硬件 profile 为 `5`。GA 初代种群不再使用“下界加 16 位有符号扰动”，而采用全 32 位 PRNG 的无偏区间映射：
+
+```text
+gene = min + floor((max - min) * random_u32 / 2^32)
+```
+
+个体 0 仍保留为区间中点，个体 1～31 在每个基因的完整 `[min,max)` 范围内均匀初始化。该乘法只处于初始化路径，不改变 fitness lane 的逐步积分顺序。板端协议新增并固化：`3=legacy pure3_rf`、`4=高精度辛 Euler`、`5=高精度缓存 Leapfrog`。新版 board agent 只接受 profile 4/5，本轮生成的镜像必须报告 profile 5；检测到旧 profile 3 时必须拒绝启动 DMA 服务，避免软硬件版本错配。
+
+本地验证结果：
+
+```text
+uniform-init TB: PASS（gene0 低四分位 4 个，高四分位 7 个）
+cached-Leapfrog AXI 双任务 TB: PASS（14/14 words 一致）
+100 MHz setup WNS: +0.539 ns，TNS: 0
+100 MHz hold WHS: +0.057 ns，THS: 0
+DRC: 0 errors
+LUT: 12304 / 53200 (23.13%)
+FF: 9027 / 106400 (8.48%)
+BRAM: 6 / 140 (4.29%)
+DSP: 13 / 220 (5.91%)
+```
+
+新 XSA 已用于重建 standalone BSP 和 UART/DMA board-agent ELF，随后与 FSBL、profile-5 bitstream 一起重建：
+
+```text
+vivado/runs/v1_min_bd/artifacts/sd_boot/BOOT.BIN
+```
+
+本节的板级门槛已于 2026-08-15 通过：Micro SD 物理冷启动后 `INFO` 报告 `profile=0x00000005`，`PING`、`SELFTEST` 均通过，固定结果的 UART/DMA soak 为 100/100。详细全栈同步与验收见 18.4。
+
+### 18.4 Profile-5 板级验收与 v1.1 全栈同步（2026-08-15）
+
+板级验收结果：
+
+```text
+PING: PONG
+INFO: protocol=1 version=0x00010000 profile=0x00000005 status=0x00000100 raw=0
+SELFTEST: PASS
+UART/DMA soak: 100/100 PASS, 2.903431 s, average 0.029034 s
+RUN(max_gen=1, steps=100000): valid result, survived_steps=3667
+```
+
+最后一项只证明 100000 步请求、DMA 和新积分 lane 可以执行；它没有找到 100000 步稳定解，不能被解读成十万步科学目标已经完成。对该染色体的 Profile-5 PC 重放同样在 3667 步因逃逸终止，证明本次短生存并非前端旧积分器造成的显示漂移。
+
+v1.1 后端与 Web 已同步到硬件 profile 5：
+
+- v1.1 全栈健康检查要求 profile 5，并显示 `pure3_hifi_leapfrog_cached`；profile 4 只保留为板端回退，不得与缓存 Leapfrog 前端混用；
+- 搜索结果采用 Q32.32、平滑力 LUT、缓存加速度 Leapfrog 的 PC 同规则重放；
+- 每次搜索返回 FPGA/PC `survived_steps` 一致性探针；
+- 自定义初态明确标为 `PC PROFILE-5 LEAPFROG REPLAY`，不冒充 PL 直接执行；
+- 搜索积分上限为 131072；
+- 四个演示模板均替换为 profile-5 实板固定 seed/染色体，并检查精确复现；
+- 性能探针改用 Profile-5 标量参考与 float64 NumPy Leapfrog 代理，页面明确标注比较边界。
+
+四个模板在实板上再次扫描，均满足：固定染色体一致、硬件/PC 生存步数一致、完整运行 32768 步。分类分别为长时生存、安全擦掠、三星纠缠和近周期回归；这些都是有限窗口演示标签，不构成无限稳定或严格周期证明。
+
+标准 HTTP 性能探针（288 candidates，8192-step cap，2 次硬件采样）：
+
+```text
+Zynq-7020 FPGA complete GA+DMA+UART: 264.15 eval/s, 1090.30 ms
+Python scalar Profile-5 reference:     4.12 eval/s, 69959.41 ms
+NumPy float64 batch proxy:            159.37 eval/s, 1807.17 ms
+```
+
+因此该探针下 FPGA 完整链路约为标量参考的 64.2 倍、NumPy 代理的 1.66 倍。两条软件路径不含 GA 选择/繁殖和传输，NumPy 也不与 LUT 位精确等价，所以该结果只能作为当前有界工作负载的端到端诊断，不得外推为通用加速比。
+
+验收记录：
+
+```text
+doc/test_results/v1_hifi_leapfrog_sd_soak.json
+doc/test_results/v1_profile5_preset_scan.json
+doc/test_results/v1_profile5_performance_probe.json
+```

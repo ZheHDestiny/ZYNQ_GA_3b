@@ -21,7 +21,8 @@ module tb_ga3b_pure3_rf_accel_top;
     integer i;
     integer timeout;
 
-    ga3b_pure3_rf_accel_top dut (
+    // Full-stack target configuration: high-fidelity cached Leapfrog.
+    ga3b_pure3_rf_accel_top #(.HIFI_ENABLE(1), .INTEGRATOR_MODE(1)) dut (
         .aclk(clk), .aresetn(rst_n),
         .s_axis_tdata(s_axis_tdata), .s_axis_tvalid(s_axis_tvalid),
         .s_axis_tready(s_axis_tready), .s_axis_tlast(s_axis_tlast),

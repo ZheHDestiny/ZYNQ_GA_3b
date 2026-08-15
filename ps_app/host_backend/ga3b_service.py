@@ -11,13 +11,15 @@ from ga3b_models import SearchResult, parse_info_line
 from ga3b_reference import (
     FITNESS_PROFILES,
     assess_profile_match,
-    benchmark_numpy,
-    benchmark_scalar,
     classify_trajectory,
-    replay_trajectory,
     score_trajectory,
     select_display_window,
     trajectory_metrics,
+)
+from ga3b_hifi_reference import (
+    benchmark_hifi_numpy,
+    benchmark_hifi_scalar,
+    replay_hifi,
 )
 from ga3b_uart_client import Ga3bUartClient
 
@@ -36,16 +38,31 @@ class SearchRequest:
         def number(name: str, default: int) -> int:
             value = data.get(name, default)
             return int(value, 0) if isinstance(value, str) else int(value)
+
+        def probability_q16(percent_name: str, q16_name: str, default: int) -> int:
+            """Accept browser percentages while preserving the Q16 API/RTL contract."""
+            if percent_name not in data:
+                return number(q16_name, default)
+            try:
+                percent = float(data[percent_name])
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"{percent_name} must be a number in 0..100") from exc
+            if not math.isfinite(percent) or not 0.0 <= percent <= 100.0:
+                raise ValueError(f"{percent_name} must be in 0..100")
+            # Q0.16 has no exact representation for 1.0. Saturate 100% to
+            # 0xffff; all other percentages use nearest-integer encoding.
+            return min(65535, int(round(percent * 65536.0 / 100.0)))
+
         request = cls(
             max_gen=number("max_gen", 2), steps=number("steps", 256),
-            mutation_q16=number("mutation_q16", 0x1000),
-            crossover_q16=number("crossover_q16", 0xC000),
+            mutation_q16=probability_q16("mutation_percent", "mutation_q16", 0x1000),
+            crossover_q16=probability_q16("crossover_percent", "crossover_q16", 0xC000),
             seed0=number("seed0", 0x12345678), seed1=number("seed1", 0x87654321),
         )
         if not 1 <= request.max_gen <= 256:
             raise ValueError("max_gen must be in 1..256 for the HTTP service")
-        if not 1 <= request.steps <= 65536:
-            raise ValueError("steps must be in 1..65536 for the HTTP service")
+        if not 1 <= request.steps <= 131072:
+            raise ValueError("steps must be in 1..131072 for the HTTP service")
         if not 0 <= request.mutation_q16 <= 65535 or not 0 <= request.crossover_q16 <= 65535:
             raise ValueError("Q16 rates must be in 0..65535")
         if not -0x80000000 <= request.seed0 <= 0xFFFFFFFF or not -0x80000000 <= request.seed1 <= 0xFFFFFFFF:
@@ -103,10 +120,22 @@ class Ga3bBoardService:
         try:
             pong = self._command("PING")[-1].line
             info_line = self._command("INFO")[-1].line
-            return {"status": "ok", "board_connected": True, "accelerator_ready": True,
-                    "transport": "uart", "port": self.port, "profile_name": "pure3_rf",
+            hardware = parse_info_line(info_line)
+            profile = hardware["profile_decimal"]
+            profile_names = {3: "pure3_rf_legacy", 4: "pure3_hifi_symplectic",
+                             5: "pure3_hifi_leapfrog_cached"}
+            # v1.1 replay, templates and probes are synchronized to profile 5.
+            # Profile 4 remains a valid board-agent fallback but must not be
+            # presented by this service as model-consistent.
+            ready = profile == 5
+            return {"status": "ok" if ready else "profile_mismatch",
+                    "board_connected": True, "accelerator_ready": ready,
+                    "transport": "uart", "port": self.port,
+                    "profile_name": profile_names.get(profile, "unknown"),
                     "latency_ms": (time.perf_counter() - started) * 1000,
-                    "pong": pong, "hardware": parse_info_line(info_line)}
+                    "pong": pong, "hardware": hardware,
+                    "trajectory_model": ("Q32.32 smooth-LUT cached Leapfrog"
+                                         if profile == 5 else "profile mismatch")}
         except Exception as exc:
             return {"status": "degraded", "board_connected": False, "accelerator_ready": False,
                     "transport": "uart", "port": self.port, "error": str(exc)}
@@ -126,25 +155,45 @@ class Ga3bBoardService:
         # depend primarily on the requested integration window, while GA and
         # UART add a smaller term.  It deliberately overestimates fast-failing
         # populations instead of accepting a request that can monopolize COM.
-        # Calibrated conservatively from the physical Zynq-7020 board.  A
-        # 64-generation, 32768-step run typically completes in about 3 s.
-        per_candidate_seconds = (0.150 + request.steps / 7000.0 +
-                                 request.candidate_evals * request.steps / 180_000_000.0)
+        # Calibrated conservatively from the physical Zynq-7020 board. Runtime
+        # is strongly data-dependent because unstable lanes terminate early.
+        # Profile-5 physical-board calibration (2026-08-15): a 64-generation,
+        # 100000-step long-lived run costs roughly 40--50 s per multi-start;
+        # eight starts plus PC replay measured 457.3 s.  Use a conservative
+        # upper estimate rather than the former 124.7 s underestimate.
+        per_candidate_seconds = (0.75 + request.steps / 2500.0 +
+                                 request.max_gen * 0.25 + request.steps / 50_000.0)
         return {"candidate_count": candidate_count,
                 "estimated_seconds": round(per_candidate_seconds * candidate_count, 3),
                 "estimated_board_eval_count": request.candidate_evals * candidate_count,
-                "limit_seconds": 600.0}
+                "limit_seconds": 600.0,
+                "estimate_model": "profile5_conservative_board_plus_pc_replay_v2",
+                "calibration_reference_seconds": 457.332}
 
     def capabilities(self) -> dict:
         return {
             "fitness_profiles": [{"id": key, **value} for key, value in FITNESS_PROFILES.items()],
-            "limits": {"max_gen": 256, "steps": 65536, "candidate_count": 16,
+            "limits": {"max_gen": 256, "steps": 131072, "candidate_count": 16,
                        "custom_steps": 131072, "request_budget_seconds": 600.0,
                        "position_abs": 2.0, "velocity_abs": 1.0,
                        "collision_l1_min": 0.125},
-            "custom_execution": "pc_rtl_replay",
+            "hardware_profile": {"id": 5, "name": "pure3_hifi_leapfrog_cached"},
+            "trajectory_model": {
+                "state": "Q32.32", "force": "smooth normalized inverse-r^3 LUT",
+                "integrator": "cached-acceleration Leapfrog", "dt": 1.0 / 256.0,
+                "bit_exact_survival_checked": True,
+            },
+            "ga_initialization": "uniform_u32_full_bounds_with_midpoint_elite",
+            "input_encoding": {
+                "probabilities": "browser percent 0.00..100.00; backend decodes to Q0.16",
+                "seed0": "RNG reproducibility primary word",
+                "seed1": "RNG reproducibility mixing word",
+                "seed_mix": "seed0 XOR swap16(seed1) initializes xorshift32",
+            },
+            "custom_execution": "pc_profile5_replay",
             "custom_execution_note": (
-                "Custom states are validated and replayed by the PC with the RTL Q16.16 model. "
+                "Custom states are validated and replayed by the PC with the profile-5 Q32.32 "
+                "smooth-LUT cached-Leapfrog model. "
                 "The current protocol does not inject a chromosome directly into PL."
             ),
         }
@@ -176,17 +225,22 @@ class Ga3bBoardService:
         ranked = []
         total_board_evals = 0
         for index in range(candidate_count):
+            # Candidate zero is the exact user/preset seed.  Additional
+            # multi-start candidates are deterministically derived from it.
             candidate_request = SearchRequest(
                 max_gen=request.max_gen, steps=request.steps,
                 mutation_q16=request.mutation_q16, crossover_q16=request.crossover_q16,
-                seed0=self._derived_seed(request.seed0, index),
-                seed1=self._derived_seed(request.seed1, index + 0x101),
+                seed0=(request.seed0 if index == 0 else
+                       self._derived_seed(request.seed0, index)),
+                seed1=(request.seed1 if index == 0 else
+                       self._derived_seed(request.seed1, index + 0x101)),
             )
             responses = self._command(candidate_request.command())
             if not responses[-1].ok:
                 raise RuntimeError(responses[-1].line)
             result = SearchResult.from_uart_line(responses[-1].line)
-            trajectory = replay_trajectory(list(result.genes), request.steps)
+            trajectory = replay_hifi(list(result.genes), request.steps,
+                                     integrator="leapfrog")
             score, metrics = score_trajectory(profile, trajectory)
             ranked.append((score, index, result, trajectory, metrics, candidate_request))
             total_board_evals += candidate_request.candidate_evals
@@ -198,8 +252,14 @@ class Ga3bBoardService:
         payload["display_trajectory"] = select_display_window(trajectory, profile)
         payload["profile_score"] = score
         payload["trajectory_metrics"] = metrics
+        payload["replay_consistency"] = {
+            "hardware_survived_steps": result.steps,
+            "pc_survived_steps": trajectory["survived_steps"],
+            "steps_match": result.steps == trajectory["survived_steps"],
+            "model": trajectory["model"],
+        }
         payload["profile_match"] = assess_profile_match(profile, metrics)
-        classification = classify_trajectory(metrics, result.steps)
+        classification = classify_trajectory(metrics, result.steps, profile)
         payload["classification"] = classification
         return {"status": "PASS", "elapsed_ms": elapsed * 1000,
                 "candidate_evals": total_board_evals,
@@ -235,15 +295,15 @@ class Ga3bBoardService:
         for a, b in ((0,1),(0,2),(1,2)):
             if abs(bodies[b][0]-bodies[a][0]) + abs(bodies[b][1]-bodies[a][1]) < 0.125:
                 raise ValueError("initial bodies violate the RTL collision threshold")
-        estimated = steps / 80_000.0
-        if estimated > 2.0:
-            raise ValueError("custom replay exceeds the 2 second synchronous CPU budget")
+        estimated = steps / 50_000.0
+        if estimated > 5.0:
+            raise ValueError("custom replay exceeds the 5 second synchronous CPU budget")
         genes = [int(round(value * 65536.0)) & 0xFFFFFFFF for value in values]
         started = time.perf_counter()
-        trajectory = replay_trajectory(genes, steps)
+        trajectory = replay_hifi(genes, steps, integrator="leapfrog")
         metrics = trajectory_metrics(trajectory)
         classification = classify_trajectory(metrics, trajectory["survived_steps"])
-        return {"status": "PASS", "execution_target": "pc_rtl_replay",
+        return {"status": "PASS", "execution_target": "pc_profile5_replay",
                 "elapsed_ms": (time.perf_counter()-started)*1000,
                 "estimated_seconds": round(estimated, 3), "steps": steps,
                 "genes": values, "genes_raw": [f"0x{value:08X}" for value in genes],
@@ -279,12 +339,13 @@ class Ga3bBoardService:
                  "elapsed_ms": average * 1000, "candidate_evals": candidates,
                  "candidate_evals_per_second": candidates / average,
                  "samples_ms": [item * 1000 for item in timings]},
-                benchmark_scalar(genes, request.steps, candidates),
-                benchmark_numpy(genes, request.steps, candidates),
+                benchmark_hifi_scalar(genes, request.steps, candidates),
+                benchmark_hifi_numpy(genes, request.steps, candidates),
             ],
             "comparison_note": (
                 "FPGA probe includes population initialization, GA selection/reproduction, AXI DMA and UART. "
-                "Python/NumPy probes replay only the returned chromosome's fitness workload for the same "
-                "number of candidate evaluations; they are diagnostic proxies, not an algorithm-identical speedup claim."
+                "Python scalar replays the profile-5 fixed-point fitness; NumPy uses the same smooth-force "
+                "Leapfrog physics in float64 but is not LUT-bit-exact. Both omit GA selection/reproduction "
+                "and transport, so they remain diagnostic proxies rather than algorithm-identical speedups."
             ),
         }

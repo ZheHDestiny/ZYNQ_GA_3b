@@ -42,8 +42,11 @@ def _failed(pos: list[list[int]]) -> bool:
 
 
 def replay_trajectory(genes_raw: list[int] | tuple[int, ...], steps: int,
-                      max_points: int = 720) -> dict:
+                      max_points: int = 720,
+                      integrator: str = "explicit_euler") -> dict:
     """Replay the approximate Q16.16 RTL integrator and return sampled positions."""
+    if integrator not in ("explicit_euler", "symplectic_euler"):
+        raise ValueError("integrator must be explicit_euler or symplectic_euler")
     g = [i32(item) for item in genes_raw]
     pos = [[g[0], g[1]], [g[4], g[5]], [i32(-g[0] - g[4]), i32(-g[1] - g[5])]]
     vel = [[g[2], g[3]], [g[6], g[7]], [i32(-g[2] - g[6]), i32(-g[3] - g[7])]]
@@ -61,12 +64,13 @@ def replay_trajectory(genes_raw: list[int] | tuple[int, ...], steps: int,
             fx, fy = i32(dx >> shift), i32(dy >> shift)
             acc[a][0], acc[a][1] = i32(acc[a][0] + fx), i32(acc[a][1] + fy)
             acc[b][0], acc[b][1] = i32(acc[b][0] - fx), i32(acc[b][1] - fy)
-        old_vel = [item[:] for item in vel]
         for body in range(3):
             vel[body][0] = i32(vel[body][0] + (acc[body][0] >> 8))
             vel[body][1] = i32(vel[body][1] + (acc[body][1] >> 8))
-            pos[body][0] = i32(pos[body][0] + (old_vel[body][0] >> 8))
-            pos[body][1] = i32(pos[body][1] + (old_vel[body][1] >> 8))
+            step_vx = vel[body][0] if integrator == "symplectic_euler" else i32(vel[body][0] - (acc[body][0] >> 8))
+            step_vy = vel[body][1] if integrator == "symplectic_euler" else i32(vel[body][1] - (acc[body][1] >> 8))
+            pos[body][0] = i32(pos[body][0] + (step_vx >> 8))
+            pos[body][1] = i32(pos[body][1] + (step_vy >> 8))
         if _failed(pos):
             failure = "collision_or_escape"
         else:
@@ -76,7 +80,8 @@ def replay_trajectory(genes_raw: list[int] | tuple[int, ...], steps: int,
         if failure:
             break
     return {"frames": frames, "survived_steps": survived, "failure": failure,
-            "model": "RTL Q16.16 replay", "requested_steps": steps}
+            "model": f"RTL Q16.16 {integrator} replay", "integrator": integrator,
+            "requested_steps": steps}
 
 
 def scalar_fitness(genes_raw: list[int] | tuple[int, ...], steps: int) -> int:
@@ -302,8 +307,29 @@ TRAJECTORY_CLASSES = {
 }
 
 
-def classify_trajectory(metrics: dict, survived_steps: int = 0) -> dict:
+def classify_trajectory(metrics: dict, survived_steps: int = 0,
+                        preferred_profile: str | None = None) -> dict:
     """Apply transparent finite-window labels; this is not a stability proof."""
+    profile_classes = {
+        "survival": "long_survival", "close_pass": "safe_close_pass",
+        "braid": "three_body_braid", "recurrence": "near_recurrence",
+    }
+    # A requested objective is allowed to disambiguate overlapping finite-window
+    # metrics, but only when its published qualification rule is actually met.
+    # This avoids labelling every long profile-5 orbit as recurrence merely because
+    # recurrence_error happens to be below a loose display threshold.
+    if preferred_profile in profile_classes:
+        match = assess_profile_match(preferred_profile, metrics)
+        if match["matched"]:
+            ident = profile_classes[preferred_profile]
+            confidence = {
+                "survival": 0.90, "close_pass": 0.88,
+                "braid": 0.86, "recurrence": 0.92,
+            }[preferred_profile]
+            reasons = [match["criterion"], "按用户选择的有限窗口物理目标判定"]
+            return {"id": ident, "name": TRAJECTORY_CLASSES[ident],
+                    "confidence": confidence, "reasons": reasons,
+                    "finite_window_only": True}
     if (metrics["recurrence_error"] <= 4.0 and metrics["radial_drift"] <= 3.2
             and survived_steps >= 16000):
         ident, confidence = "near_recurrence", 0.72

@@ -109,8 +109,17 @@ def create_app(board_service=None, repository=None) -> Flask:
         if preset is None:
             raise ValueError("unknown trajectory preset")
         result = service.search(SearchRequest.from_json(preset), preset["fitness_profile"], 1)
+        actual_genes = result["result"].get("genes_q16_signed", [])
+        result["reproduction"] = {
+            "hardware_profile": preset.get("hardware_profile"),
+            "expected_steps": preset.get("expected_steps"),
+            "steps_match": result["result"].get("steps") == preset.get("expected_steps"),
+            "genes_match": actual_genes == preset.get("expected_genes_q16"),
+        }
         result["preset"] = {"id": preset["id"], "name": preset["name"],
-                            "expected_category": preset["expected_category"]}
+                            "expected_category": preset["expected_category"],
+                            "hardware_profile": preset.get("hardware_profile"),
+                            "model": preset.get("model")}
         result["record_id"] = result_store.save("fpga_preset", result)
         return jsonify(result)
 

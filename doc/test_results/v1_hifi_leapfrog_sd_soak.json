@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "port": "COM13",
+  "iterations": 100,
+  "elapsed_seconds": 2.903431,
+  "average_seconds": 0.029034,
+  "result": "GA3B_RSP OK RESULT magic=0x52534C54 status=0x00000002 best_idx=0 fitness_hi=0x00000001 fitness_lo=0x00000010 steps=16 gene0=0x000037DA gene1=0x0000C2C4 gene2=0x00002ACF gene3=0xFFFF240C gene4=0x00013D51 gene5=0xFFFE13BE gene6=0xFFFF8FA0 gene7=0xFFFFD9EC"
+}

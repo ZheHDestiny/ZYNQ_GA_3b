@@ -1,0 +1,49 @@
+﻿{
+    "comparison_note":  "FPGA probe includes population initialization, GA selection/reproduction, AXI DMA and UART. Python scalar replays the profile-5 fixed-point fitness; NumPy uses the same smooth-force Leapfrog physics in float64 but is not LUT-bit-exact. Both omit GA selection/reproduction and transport, so they remain diagnostic proxies rather than algorithm-identical speedups.",
+    "probe_policy":  {
+                         "bounded":  false,
+                         "hardware_runs":  2,
+                         "max_gen":  8,
+                         "requested_max_gen":  8,
+                         "requested_steps":  8192,
+                         "steps":  8192
+                     },
+    "probes":  [
+                   {
+                       "candidate_evals":  288,
+                       "candidate_evals_per_second":  264.1483666341681,
+                       "elapsed_ms":  1090.2963500011538,
+                       "kind":  "complete GA + DMA + UART end-to-end",
+                       "name":  "Zynq-7020 FPGA",
+                       "samples_ms":  [
+                                          1091.1544000009599,
+                                          1089.4383000013477
+                                      ]
+                   },
+                   {
+                       "candidate_evals":  288,
+                       "candidate_evals_per_second":  4.116672672839631,
+                       "checksum":  2359296,
+                       "elapsed_ms":  69959.41210000092,
+                       "kind":  "profile-5 fixed-point fitness-only proxy",
+                       "model":  "Q32.32 smooth-LUT cached Leapfrog",
+                       "name":  "Python scalar HiFi"
+                   },
+                   {
+                       "candidate_evals":  288,
+                       "candidate_evals_per_second":  159.36563623115947,
+                       "checksum":  2359296,
+                       "elapsed_ms":  1807.1650000019872,
+                       "kind":  "float64 smooth-force Leapfrog fitness-only proxy",
+                       "model":  "float64 GM/r^3 cached Leapfrog (not LUT-bit-exact)",
+                       "name":  "NumPy batch HiFi"
+                   }
+               ],
+    "status":  "PASS",
+    "workload":  {
+                     "hardware_candidate_evals":  288,
+                     "hardware_runs":  2,
+                     "max_gen":  8,
+                     "steps":  8192
+                 }
+}
