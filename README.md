@@ -8,13 +8,11 @@
 
 ## 演示视频
 
-<video width="100%" autoplay loop muted playsinline controls>
-  <source src="https://github.com/ZheHDestiny/ZYNQ_GA_3b/raw/refs/heads/main/video/%E6%BC%94%E7%A4%BA%E6%95%88%E6%9E%9C.mp4" type="video/mp4">
-  您的浏览器不支持 HTML5 视频；请通过下方链接播放。
-</video>
+![实际上板演示（自动循环播放）](video/演示效果.gif)
 
-[无法播放时，点击观看实际上板演示视频（`video/演示效果.mp4`）](video/%E6%BC%94%E7%A4%BA%E6%95%88%E6%9E%9C.mp4)
+[点击观看完整演示视频（`video/演示效果.mp4`）](video/%E6%BC%94%E7%A4%BA%E6%95%88%E6%9E%9C.mp4)
 
+> 上方 GIF 为完整 25 秒实板演示，在 GitHub 页面自动循环播放；完整 MP4 可点击链接查看。GitHub README 会过滤指向仓库文件的 `<video>` 标签，因此内嵌播放采用 GIF。
 
 ## 物理建模基础
 
