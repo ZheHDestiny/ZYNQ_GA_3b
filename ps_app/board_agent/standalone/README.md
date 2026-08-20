@@ -37,10 +37,10 @@ The smoke program builds one `pure3_rf` task packet:
 It starts S2MM first, then MM2S, polls DMA/status, invalidates the result buffer,
 and prints `GA3B_DMA_SMOKE_PASS` on success.
 
-The current v1.0 minimal board path intentionally uses the routed pure3 fallback
-profile, because the earlier restricted4 RTL exceeded ZYNQ-7020 resources/timing.
-The restricted4 RTL remains in `rtl/ga_core/` and `rtl/top/ga3b_heng_era_accel_top.v`
-for continued development.
+The current board path uses Pure3 Profile 5: the high-fidelity smooth-force,
+cached-acceleration Leapfrog implementation.  The retired restricted4/v0.3 RTL
+is intentionally excluded from Git tracking so a fresh checkout contains only
+the maintained Pure3 hardware path.
 
 ## Persistent UART agent
 
@@ -73,5 +73,5 @@ The accepted build must also pass the fixed-seed 100-run test:
 powershell -ExecutionPolicy Bypass -File scripts/run/run_v1_uart_board_test.ps1 -Port COM13 -Count 100
 ```
 
-Protocol, re-entrancy, memory-latency, determinism, and build-provenance rules
-are normative in `doc/design_contract.md`.
+The effective RTL hierarchy, Profile-5 parameter override and build provenance
+are documented in `doc/当前RTL生效设计820.md`.

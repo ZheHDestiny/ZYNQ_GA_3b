@@ -107,3 +107,33 @@ doc/test_results/ga3b_results.sqlite3-*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Retired RTL branches kept locally only.  The tracked design is the active
+# Pure3 Profile-5 (HiFi cached-Leapfrog) chain documented in
+# doc/当前RTL生效设计820.md.
+/rtl/ga_core/README.md
+/rtl/ga_core/filelist.f
+/rtl/ga_core/ga3b_fitness_lane.v
+/rtl/ga_core/ga3b_ga_core.v
+/rtl/ga_core/ga3b_heng_era_fitness_lane.v
+/rtl/ga_core/ga3b_heng_era_fitness_lane_stub.v
+/rtl/ga_core/ga3b_heng_era_metric_accumulator.v
+/rtl/ga_core/ga3b_pure3_fallback_fitness_lane.v
+/rtl/ga_core/ga3b_sun3_integrator.v
+/rtl/ga_core/ga3b_test_planet_integrator.v
+/rtl/pure3_core/*.bak
+/rtl/tb/filelist_tb.f
+/rtl/tb/filelist_v03_top.f
+/rtl/tb/tb_ga3b_ga_core_smoke.v
+/rtl/tb/tb_ga3b_heng_era_accel_top.v
+/rtl/top/ga3b_heng_era_accel_top.v
+
+# Retired v0.3/restricted4 and standalone legacy route flows.
+/scripts/run/report_pure3_rf_timing_80mhz.ps1
+/scripts/run/run_ga_core_sim.ps1
+/scripts/run/run_pure3_rf_route.ps1
+/scripts/run/run_v03_route.ps1
+/scripts/run/run_v03_top_sim.ps1
+/vivado/scripts/report_pure3_rf_timing_80mhz.tcl
+/vivado/scripts/run_pure3_rf_route.tcl
+/vivado/scripts/run_v03_route.tcl
